@@ -7,9 +7,9 @@ import { MapMode, MarkerData } from '../share/types.ts';
 // 在线地图配置
 export const AMAP_ONLINE_CONFIG = {
   // 高德地图 Web API 密钥
-  API_KEY: '75bb5fba220426729ed65da3b2982f25',
+  API_KEY: window.CONFIG?.MAP_CONFIG?.KEY,
   // 主JS文件路径
-  MAIN_JS: 'https://webapi.amap.com/maps?v=2.0&key=75bb5fba220426729ed65da3b2982f25',
+  MAIN_JS: 'https://webapi.amap.com/maps?v=2.0&key=' + window.CONFIG?.MAP_CONFIG?.KEY,
   // 插件列表
   PLUGINS: ['AMap.MouseTool', 'AMap.RangingTool', 'AMap.Scale', 'AMap.ToolBar', 'AMap.MarkerCluster'],
 };
