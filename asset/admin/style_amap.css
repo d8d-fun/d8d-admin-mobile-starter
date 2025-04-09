@@ -1,0 +1,35 @@
+
+.marker-label {
+  color: #333;
+  font-size: 12px;
+  background: #fff;
+  padding: 2px 6px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.amap-marker-label {
+    border: none !important;
+    background: none !important;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-left: 4px;
+}
+
+.status-dot.online {
+  background-color: #4CAF50;
+}
+
+.status-dot.offline {
+  background-color: #FF5252;
+}
