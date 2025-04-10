@@ -35,6 +35,7 @@ import { createAuthRoutes } from "./routes_auth.ts";
 import { createUserRoutes } from "./routes_users.ts";
 import { createMessagesRoutes } from "./routes_messages.ts";
 import { createMigrationsRoutes } from "./routes_migrations.ts";
+import { createHomeRoutes } from "./routes_home.ts";
 dayjs.extend(utc)
 // 初始化debug实例
 const log = {
@@ -305,6 +306,7 @@ export default function({ apiClient, app, moduleDir }: ModuleParams) {
   api.route('/settings', createSystemSettingsRoutes(withAuth)) // 添加系统设置路由
   api.route('/messages', createMessagesRoutes(withAuth)) // 添加消息路由
   api.route('/migrations', createMigrationsRoutes(withAuth)) // 添加数据库迁移路由
+  api.route('/home', createHomeRoutes(withAuth)) // 添加首页路由
   
   // 注册API路由
   honoApp.route('/api', api)

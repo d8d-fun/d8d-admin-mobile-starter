@@ -378,35 +378,38 @@ export interface KnowInfo {
   /** 主键ID */
   id: number;
   
-  /** 文章的标题 */
-  title?: string;
+  /** 标题 */
+  title: string;
   
-  /** 文章的标签 */
-  tags?: string;
-  
-  /** 文章的内容 */
+  /** 内容 */
   content?: string;
   
-  /** 文章的作者 */
+  /** 作者 */
   author?: string;
   
-  /** 文章的分类 */
-  category?: string;
+  /** 分类 */
+  category: string;
   
-  /** 文章的封面图片URL */
+  /** 标签 */
+  tags?: string;
+  
+  /** 封面图片URL */
   cover_url?: string;
   
   /** 审核状态 */
   audit_status?: number;
   
-  /** 是否被删除 (0否 1是) */
+  /** 排序权重 */
+  sort_order?: number;
+  
+  /** 是否删除 (0否 1是) */
   is_deleted?: number;
   
   /** 创建时间 */
-  created_at: Date;
+  created_at: string;
   
   /** 更新时间 */
-  updated_at: Date;
+  updated_at: string;
 }
 
 // 登录位置详细信息

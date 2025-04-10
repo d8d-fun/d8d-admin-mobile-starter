@@ -73,6 +73,7 @@ const createKnowInfoTable: MigrationLiveDefinition = {
       table.string('category').comment('分类');
       table.string('cover_url').comment('封面图片URL');
       table.integer('audit_status').defaultTo(AuditStatus.PENDING).comment('审核状态');
+      table.integer('sort_order').defaultTo(0).comment('排序权重');
       table.integer('is_deleted').defaultTo(0).comment('是否被删除 (0否 1是)');
       table.timestamps(true, true);
       
@@ -82,6 +83,7 @@ const createKnowInfoTable: MigrationLiveDefinition = {
       table.index('author');
       table.index('category');
       table.index('audit_status');
+      table.index('sort_order');
       table.index('is_deleted');
     });
   },

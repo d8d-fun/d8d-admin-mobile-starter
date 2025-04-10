@@ -5,7 +5,8 @@ import type {
   User, FileLibrary, FileCategory, ThemeSettings,
   SystemSetting, SystemSettingGroupData, 
   LoginLocation, LoginLocationDetail,
-  Message, MessageType, MessageStatus, UserMessage
+  MessageType, MessageStatus, UserMessage,
+  KnowInfo
 } from '../share/types.ts';
 
 
@@ -491,6 +492,78 @@ export const ChartAPI = {
   getDashboardOverview: async (): Promise<ChartDataResponse<DashboardOverviewData>> => {
     try {
       const response = await axios.get(`${API_BASE_URL}/charts/dashboard-overview`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+};
+// 首页API相关类型定义
+interface HomeBannersResponse {
+  message: string;
+  data: KnowInfo[];
+}
+
+interface HomeNewsResponse {
+  message: string;
+  data: KnowInfo[];
+  pagination: {
+    total: number;
+    current: number;
+    pageSize: number;
+    totalPages: number;
+  };
+}
+
+interface HomeNoticesResponse {
+  message: string;
+    data: {
+      id: number;
+      title: string;
+      content: string;
+      created_at: string;
+    }[];
+  pagination: {
+    total: number;
+    current: number;
+    pageSize: number;
+    totalPages: number;
+  };
+}
+
+// 首页API
+export const HomeAPI = {
+  // 获取轮播图
+  getBanners: async (): Promise<HomeBannersResponse> => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/home/banners`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // 获取新闻列表
+  getNews: async (params?: {
+    page?: number,
+    pageSize?: number,
+    category?: string
+  }): Promise<HomeNewsResponse> => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/home/news`, { params });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // 获取通知列表
+  getNotices: async (params?: {
+    page?: number,
+    pageSize?: number
+  }): Promise<HomeNoticesResponse> => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/home/notices`, { params });
       return response.data;
     } catch (error) {
       throw error;

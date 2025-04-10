@@ -1,37 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
-import { 
-  HomeIcon, 
-  UserIcon, 
-  NewspaperIcon, 
-  BellIcon 
+import { HomeAPI } from './api.ts';
+import { MessageAPI } from './api.ts';
+import {
+  HomeIcon,
+  UserIcon,
+  NewspaperIcon,
+  BellIcon
 } from '@heroicons/react/24/outline';
 import { useAuth } from './hooks.tsx';
 import { formatRelativeTime } from './utils.ts';
-
-interface BannerItem {
-  id: number;
-  title: string;
-  image: string;
-  link: string;
-}
-
-interface NewsItem {
-  id: number;
-  title: string;
-  summary: string;
-  publish_date: string;
-  cover?: string;
-  category: string;
-}
-
-interface NoticeItem {
-  id: number;
-  title: string;
-  content: string;
-  created_at: string;
-  is_read: boolean;
-}
+import { KnowInfo, UserMessage, MessageType, MessageStatus } from '../share/types.ts';
 
 // 首页组件
 const HomePage: React.FC = () => {
@@ -39,78 +18,43 @@ const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [loading, setLoading] = useState(true);
-  const [banners, setBanners] = useState<BannerItem[]>([]);
-  const [news, setNews] = useState<NewsItem[]>([]);
-  const [notices, setNotices] = useState<NoticeItem[]>([]);
+  const [banners, setBanners] = useState<KnowInfo[]>([]);
+  const [news, setNews] = useState<KnowInfo[]>([]);
+  const [notices, setNotices] = useState<UserMessage[]>([]);
   const [activeTab, setActiveTab] = useState('news');
   
   // 模拟加载数据
   useEffect(() => {
-    // 模拟API请求
-    setTimeout(() => {
-      // 模拟轮播图数据
-      setBanners([
-        { 
-          id: 1, 
-          title: '欢迎使用移动端应用', 
-          image: 'https://images.unsplash.com/photo-1518655048521-f130df041f66?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cG9ydGZvbGlvJTIwYmFja2dyb3VuZHxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80',
-          link: '/welcome'
-        },
-        { 
-          id: 2, 
-          title: '新功能上线了', 
-          image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cG9ydGZvbGlvJTIwYmFja2dyb3VuZHxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80',
-          link: '/new-features'
-        }
-      ]);
-      
-      // 模拟新闻数据
-      setNews([
-        {
-          id: 1,
-          title: '用户体验升级，新版本发布',
-          summary: '我们很高兴地宣布，新版本已经发布，带来了更好的用户体验和更多新功能。',
-          publish_date: '2023-05-01T08:30:00',
-          cover: 'https://images.unsplash.com/photo-1496171367470-9ed9a91ea931?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTB8fHRlY2h8ZW58MHx8MHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
-          category: '产品更新'
-        },
-        {
-          id: 2,
-          title: '新的数据分析功能上线',
-          summary: '新的数据分析功能让您更深入地了解您的业务数据，提供更好的决策支持。',
-          publish_date: '2023-04-25T14:15:00',
-          cover: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fGNoYXJ0fGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
-          category: '功能介绍'
-        },
-        {
-          id: 3,
-          title: '如何提高工作效率的5个小技巧',
-          summary: '这篇文章分享了5个可以立即实施的小技巧，帮助您提高日常工作效率。',
-          publish_date: '2023-04-20T09:45:00',
-          category: '使用技巧'
-        }
-      ]);
-      
-      // 模拟通知数据
-      setNotices([
-        {
-          id: 1,
-          title: '系统维护通知',
-          content: '我们将于本周六凌晨2点至4点进行系统维护，期间系统可能会出现短暂不可用。',
-          created_at: '2023-05-02T10:00:00',
-          is_read: false
-        },
-        {
-          id: 2,
-          title: '您的账户信息已更新',
-          content: '您的账户信息已成功更新，如非本人操作，请及时联系客服。',
-          created_at: '2023-05-01T16:30:00',
-          is_read: true
-        }
-      ]);
-      
-      setLoading(false);
-    }, 800);
+    const fetchData = async () => {
+      try {
+        // 获取数据
+        const [bannersRes, newsRes, messagesRes] = await Promise.all([
+          HomeAPI.getBanners(),
+          HomeAPI.getNews(),
+          MessageAPI.getMessages({ type: MessageType.ANNOUNCE })
+        ]);
+        
+        setBanners(bannersRes.data.map((item: KnowInfo) => ({
+          id: item.id,
+          title: item.title,
+          cover_url: item.cover_url,
+          content: item.content,
+          category: 'banner',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          sort_order: item.sort_order || 0
+        } as KnowInfo)));
+        setNews(newsRes.data);
+        setNotices(messagesRes.data);
+        
+        setLoading(false);
+      } catch (error) {
+        console.error('获取首页数据失败:', error);
+        setLoading(false);
+      }
+    };
+    
+    fetchData();
   }, []);
   
   // 处理轮播图点击
@@ -157,7 +101,7 @@ const HomePage: React.FC = () => {
           
           <div className="relative">
             <BellIcon className="w-6 h-6" />
-            {notices.some(notice => !notice.is_read) && (
+            {notices.some(notice => notice.user_status === MessageStatus.UNREAD) && (
               <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
             )}
           </div>
@@ -173,10 +117,10 @@ const HomePage: React.FC = () => {
               <div 
                 key={banner.id}
                 className="w-full h-40 flex-shrink-0 relative"
-                onClick={() => handleBannerClick(banner.link)}
+                onClick={() => handleBannerClick(banner.content || '')}
               >
-                <img 
-                  src={banner.image} 
+                <img
+                  src={banner.cover_url || ''}
                   alt={banner.title}
                   className="w-full h-full object-cover"
                 />
@@ -251,22 +195,24 @@ const HomePage: React.FC = () => {
                     className="bg-white p-3 rounded-lg shadow flex items-start space-x-3"
                     onClick={() => handleNewsClick(item.id)}
                   >
-                    {item.cover && (
-                      <img 
-                        src={item.cover} 
+                    {item.cover_url && (
+                      <img
+                        src={item.cover_url}
                         alt={item.title}
                         className="w-20 h-20 object-cover rounded-md flex-shrink-0"
                       />
                     )}
-                    <div className={item.cover ? '' : 'w-full'}>
+                    <div className={item.cover_url ? '' : 'w-full'}>
                       <h3 className="font-medium text-gray-900 line-clamp-2">{item.title}</h3>
-                      <p className="text-sm text-gray-500 mt-1 line-clamp-2">{item.summary}</p>
+                      <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+                        {item.content?.substring(0, 100)}...
+                      </p>
                       <div className="flex justify-between items-center mt-2">
                         <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
                           {item.category}
                         </span>
                         <span className="text-xs text-gray-400">
-                          {formatRelativeTime(item.publish_date)}
+                          {formatRelativeTime(item.created_at)}
                         </span>
                       </div>
                     </div>
@@ -288,8 +234,8 @@ const HomePage: React.FC = () => {
                     onClick={() => handleNoticeClick(item.id)}
                   >
                     <div className="flex justify-between items-start">
-                      <h3 className={`font-medium ${item.is_read ? 'text-gray-700' : 'text-blue-600'}`}>
-                        {!item.is_read && (
+                      <h3 className={`font-medium ${item.user_status === MessageStatus.READ ? 'text-gray-700' : 'text-blue-600'}`}>
+                        {item.user_status === MessageStatus.UNREAD && (
                           <span className="inline-block w-2 h-2 bg-blue-600 rounded-full mr-2"></span>
                         )}
                         {item.title}
