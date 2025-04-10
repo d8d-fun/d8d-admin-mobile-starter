@@ -30,12 +30,11 @@ import {
   createChartRoutes,
 } from "./routes_charts.ts";
 
-import { migrations } from './migrations.ts';
 // 导入基础路由
 import { createAuthRoutes } from "./routes_auth.ts";
 import { createUserRoutes } from "./routes_users.ts";
 import { createMessagesRoutes } from "./routes_messages.ts";
-
+import { createMigrationsRoutes } from "./routes_migrations.ts";
 dayjs.extend(utc)
 // 初始化debug实例
 const log = {
@@ -198,32 +197,6 @@ const initSystemSettings = async (apiClient: APIClient) => {
   }
 }
 
-// 初始化数据库
-const initDatabase = async (apiClient: APIClient) => {
-  try {
-    log.app('正在执行数据库迁移...')
-    
-    const migrationsResult = await apiClient.database.executeLiveMigrations(migrations)
-    // log.app('数据库迁移完成 %O',migrationsResult)
-    log.app('数据库迁移完成')
-    
-  } catch (error) {
-    log.app('数据库迁移失败:', error)
-  }
-}
-
-// 中间件：数据库初始化
-const withDatabase = async (c: HonoContext<{ Variables: Variables }>, next: () => Promise<void>) => {
-  try {
-    const apiClient = c.get('apiClient')
-    await initDatabase(apiClient)
-    await next()
-  } catch (error) {
-    log.api('数据库操作失败:', error)
-    return c.json({ error: '数据库操作失败' }, 500)
-  }
-}
-
 // 中间件：验证认证
 const withAuth = async (c: HonoContext<{ Variables: Variables }>, next: () => Promise<void>) => {
   try {
@@ -264,6 +237,10 @@ export default function({ apiClient, app, moduleDir }: ModuleParams) {
   // 创建API路由
   const api = new Hono<{ Variables: Variables }>()
 
+
+  // // 使用数据库中间件
+  // api.use('/*', withDatabase)
+
   // 设置环境变量
   api.use('*', async (c, next) => {
     c.set('apiClient', apiClient)
@@ -272,9 +249,6 @@ export default function({ apiClient, app, moduleDir }: ModuleParams) {
     c.set('systemSettings', await initSystemSettings(apiClient))
     await next()
   })
-
-  // 使用数据库中间件
-  api.use('/', withDatabase)
 
   // 查询仪表盘数据
   api.get('/dashboard', withAuth, async (c) => {
@@ -330,7 +304,8 @@ export default function({ apiClient, app, moduleDir }: ModuleParams) {
   api.route('/map', createMapRoutes(withAuth)) // 添加地图数据路由
   api.route('/settings', createSystemSettingsRoutes(withAuth)) // 添加系统设置路由
   api.route('/messages', createMessagesRoutes(withAuth)) // 添加消息路由
-
+  api.route('/migrations', createMigrationsRoutes(withAuth)) // 添加数据库迁移路由
+  
   // 注册API路由
   honoApp.route('/api', api)
  
