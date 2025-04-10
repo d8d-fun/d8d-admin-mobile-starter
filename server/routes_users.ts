@@ -237,5 +237,75 @@ export function createUserRoutes(withAuth: WithAuth) {
     }
   })
 
+  // 获取当前用户信息
+  usersRoutes.get('/me', withAuth, async (c) => {
+    try {
+      const user = c.get('user')!
+      
+      const apiClient = c.get('apiClient')
+      const userData = await apiClient.database.table('users')
+        .where('id', user.id)
+        .select('id', 'username', 'nickname', 'email', 'phone', 'role', 'created_at')
+        .first()
+      
+      if (!user) {
+        return c.json({ error: '用户不存在' }, 404)
+      }
+      
+      return c.json({
+        data: user,
+        message: '获取用户详情成功'
+      })
+    } catch (error) {
+      console.error('获取当前用户信息失败:', error)
+      return c.json({ error: '获取当前用户信息失败' }, 500)
+    }
+  })
+
+  // 更新当前用户信息
+  usersRoutes.put('/me', withAuth, async (c) => {
+    try {
+      const user = c.get('user')!
+      const apiClient = c.get('apiClient')
+      const body = await c.req.json()
+      
+      // 验证必填字段
+      const { nickname, email, phone } = body
+      if (!nickname || !email) {
+        return c.json({ error: '缺少必要的用户信息' }, 400)
+      }
+
+      // 更新用户信息
+      const updateData: any = {
+        nickname,
+        email,
+        phone: phone || null,
+        updated_at: new Date()
+      }
+
+      // 如果提供了新密码，则更新密码
+      if (body.password) {
+        updateData.password = body.password
+      }
+
+      await apiClient.database.table('users')
+        .where('id', user.id)
+        .update(updateData)
+
+      const updatedUser = await apiClient.database.table('users')
+        .where('id', user.id)
+        .select('id', 'username', 'nickname', 'email', 'phone', 'role', 'created_at')
+        .first()
+
+      return c.json({
+        data: updatedUser,
+        message: '更新用户信息成功'
+      })
+    } catch (error) {
+      console.error('更新当前用户信息失败:', error)
+      return c.json({ error: '更新当前用户信息失败' }, 500)
+    }
+  })
+
   return usersRoutes
-} 
+}

@@ -32,6 +32,7 @@ export interface User {
   phone?: string;
   role: string;
   avatar?: string;
+  password?: string;
 }
 
 export interface MenuItem {
