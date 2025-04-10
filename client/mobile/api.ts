@@ -222,6 +222,26 @@ export const UserAPI = {
     } catch (error) {
       throw error;
     }
+  },
+  
+  // 获取当前用户信息
+  getCurrentUser: async (): Promise<UserResponse> => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/users/me`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+  
+  // 更新当前用户信息
+  updateCurrentUser: async (userData: Partial<User>): Promise<UserUpdateResponse> => {
+    try {
+      const response = await axios.put(`${API_BASE_URL}/users/me`, userData);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
   }
 };
 

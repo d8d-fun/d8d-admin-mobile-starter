@@ -19,9 +19,7 @@ export default function SettingsPage() {
       phone?: string
       password?: string
     }) => {
-      const res = await UserAPI.getUsers({ limit: 1 })
-      if (!res.data?.[0]?.id) throw new Error('用户ID不存在')
-      return UserAPI.updateUser(res.data[0].id, {
+      return UserAPI.updateCurrentUser({
         nickname: data.nickname,
         email: data.email,
         phone: data.phone,
