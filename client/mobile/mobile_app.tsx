@@ -192,6 +192,7 @@ const ErrorPage = () => {
 };
 
 import ProfilePage from './pages_profile.tsx'
+import SettingsPage from './pages_settings.tsx'
 
 // 移动端布局组件 - 包含底部导航
 const MobileLayout = () => {
@@ -224,7 +225,7 @@ const MobileLayout = () => {
             <BellIcon className="w-6 h-6 mb-1" />
             <span className="text-xs">通知</span>
           </Link>
-          <Link 
+          <Link
             to="/mobile/profile"
             className={`flex flex-col items-center py-2 px-4 ${
               location.pathname === '/mobile/profile' ? 'text-blue-600' : 'text-gray-500'
@@ -273,6 +274,10 @@ const App = () => {
         {
           path: 'notifications',
           element: <NotificationsPage />
+        },
+        {
+          path: 'settings',
+          element: <SettingsPage />
         }
       ]
     },
