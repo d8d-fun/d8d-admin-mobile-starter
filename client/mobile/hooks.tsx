@@ -6,45 +6,6 @@ import type { User, AuthContextType, ThemeContextType, ThemeSettings } from '../
 import { ThemeMode, FontSize, CompactMode } from '../share/types.ts';
 import { AuthAPI, ThemeAPI } from './api.ts';
 
-// 创建axios实例
-const api = axios.create({
-  baseURL: window.CONFIG?.API_BASE_URL || '/api',
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  }
-});
-
-// 请求拦截器添加token
-api.interceptors.request.use(
-  (config) => {
-    const token = getLocalStorageWithExpiry('token');
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// 响应拦截器处理错误
-api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      // 清除本地存储并刷新页面
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/mobile/login';
-    }
-    return Promise.reject(error);
-  }
-);
-
 // 默认主题设置
 const defaultThemeSettings: ThemeSettings = {
   user_id: 0,
@@ -82,7 +43,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       try {
         // 设置请求头
-        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         // 获取当前用户信息
         const currentUser = await AuthAPI.getCurrentUser();
         setUser(currentUser);
@@ -114,7 +75,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLocalStorageWithExpiry('user', user, 24);
       
       // 设置请求头
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
     } catch (error) {
       console.error('登录失败:', error);
@@ -136,7 +97,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       // 清除请求头
-      delete api.defaults.headers.common['Authorization'];
+      delete axios.defaults.headers.common['Authorization'];
       // 清除所有查询缓存
       queryClient.clear();
     }

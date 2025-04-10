@@ -192,45 +192,71 @@ const ErrorPage = () => {
 };
 
 // 添加个人页面组件
-const ProfilePage = () => (
-  <div className="p-4">
-    <h1 className="text-2xl font-bold mb-4">我的</h1>
-    <div className="bg-white rounded-lg shadow p-4 mb-4">
-      <div className="flex items-center mb-4">
-        <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mr-4">
-          <span className="text-2xl text-blue-600">用户</span>
-        </div>
-        <div>
-          <h2 className="text-xl font-semibold">用户名</h2>
-          <p className="text-gray-500">个人信息</p>
+const ProfilePage = () => {
+  const { logout, user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    if (confirm('确定要退出登录吗？')) {
+      await logout();
+      navigate('/mobile/login');
+    }
+  };
+
+  return (
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">我的</h1>
+      <div className="bg-white rounded-lg shadow p-4 mb-4">
+        <div className="flex items-center mb-4">
+          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+            {user?.avatar ? (
+              <img
+                src={user.avatar}
+                alt={user?.nickname || user?.username || '用户'}
+                className="w-16 h-16 rounded-full object-cover"
+              />
+            ) : (
+              <span className="text-2xl text-blue-600">用户</span>
+            )}
+          </div>
+          <div>
+            <h2 className="text-xl font-semibold">{user?.nickname || user?.username || '未登录用户'}</h2>
+            <p className="text-gray-500">个人信息</p>
+          </div>
         </div>
       </div>
+      <div className="bg-white rounded-lg shadow mb-4">
+        <div className="p-4 border-b">
+          <span className="font-medium">设置</span>
+        </div>
+        <div className="divide-y">
+          <div className="p-4 flex justify-between items-center">
+            <span>账号安全</span>
+            <span className="text-gray-400">›</span>
+          </div>
+          <div className="p-4 flex justify-between items-center">
+            <span>通知设置</span>
+            <span className="text-gray-400">›</span>
+          </div>
+          <div className="p-4 flex justify-between items-center">
+            <span>隐私</span>
+            <span className="text-gray-400">›</span>
+          </div>
+          <div className="p-4 flex justify-between items-center">
+            <span>关于</span>
+            <span className="text-gray-400">›</span>
+          </div>
+        </div>
+      </div>
+      <button
+        onClick={handleLogout}
+        className="w-full py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+      >
+        退出登录
+      </button>
     </div>
-    <div className="bg-white rounded-lg shadow">
-      <div className="p-4 border-b">
-        <span className="font-medium">设置</span>
-      </div>
-      <div className="divide-y">
-        <div className="p-4 flex justify-between items-center">
-          <span>账号安全</span>
-          <span className="text-gray-400">›</span>
-        </div>
-        <div className="p-4 flex justify-between items-center">
-          <span>通知设置</span>
-          <span className="text-gray-400">›</span>
-        </div>
-        <div className="p-4 flex justify-between items-center">
-          <span>隐私</span>
-          <span className="text-gray-400">›</span>
-        </div>
-        <div className="p-4 flex justify-between items-center">
-          <span>关于</span>
-          <span className="text-gray-400">›</span>
-        </div>
-      </div>
-    </div>
-  </div>
-);
+  );
+};
 
 // 添加通知页面组件
 const NotificationsPage = () => (
