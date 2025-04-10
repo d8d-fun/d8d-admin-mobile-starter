@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import { BellIcon } from '@heroicons/react/24/outline';
+import { MessageStatus } from '../share/types.ts';
 
 
 // 添加通知页面组件
@@ -79,13 +80,15 @@ export const NotificationsPage = () => {
             <div className="flex justify-between items-start">
               <h3 className="font-medium">{message.title}</h3>
               <div className="flex space-x-2">
-                <button
-                  type="button"
-                  onClick={() => handleMarkAsRead(message.id)}
-                  className="text-xs text-blue-600 hover:text-blue-800"
-                >
-                  标记已读
-                </button>
+                {message.user_status === MessageStatus.UNREAD && (
+                  <button
+                    type="button"
+                    onClick={() => handleMarkAsRead(message.id)}
+                    className="text-xs text-blue-600 hover:text-blue-800"
+                  >
+                    标记已读
+                  </button>
+                )}
                 <button
                   type="button"
                   onClick={() => handleDelete(message.id)}
