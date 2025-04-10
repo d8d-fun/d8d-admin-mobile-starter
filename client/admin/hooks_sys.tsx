@@ -113,17 +113,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   
   // 设置请求拦截器
   useEffect(() => {
-    // console.log('token状态变化，当前token:', token);
-    // if (token) {
-    //   // 从localStorage中恢复token时设置全局请求头
-    //   axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    //   console.log('从状态中恢复全局Authorization头:', axios.defaults.headers.common['Authorization']);
-    // } else {
-    //   // 登出时删除请求头
-    //   delete axios.defaults.headers.common['Authorization'];
-    //   console.log('已删除全局Authorization头');
-    // }
-    
     // 设置响应拦截器处理401错误
     const responseInterceptor = axios.interceptors.response.use(
       (response) => response,

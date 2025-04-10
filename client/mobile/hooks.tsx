@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getLocalStorageWithExpiry, setLocalStorageWithExpiry } from './utils.ts';
 import type { User, AuthContextType, ThemeContextType, ThemeSettings } from '../share/types.ts';
 import { ThemeMode, FontSize, CompactMode } from '../share/types.ts';
@@ -65,21 +66,40 @@ const ThemeContext = createContext<ThemeContextType | null>(null);
 // 认证提供者组件
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [token, setToken] = useState<string | null>(getLocalStorageWithExpiry('token'));
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const queryClient = useQueryClient();
 
-  // 初始化时从本地存储获取用户信息和令牌
-  useEffect(() => {
-    const storedToken = getLocalStorageWithExpiry('token');
-    const storedUser = getLocalStorageWithExpiry('user');
-    
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(storedUser);
-    }
-    
-    setIsLoading(false);
-  }, []);
+  // 使用useQuery检查登录状态
+  const { isLoading: isAuthChecking } = useQuery({
+    queryKey: ['auth', 'status', token],
+    queryFn: async () => {
+      if (!token) {
+        setUser(null);
+        setIsAuthenticated(false);
+        return null;
+      }
+      
+      try {
+        // 设置请求头
+        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        // 获取当前用户信息
+        const currentUser = await AuthAPI.getCurrentUser();
+        setUser(currentUser);
+        setIsAuthenticated(true);
+        setLocalStorageWithExpiry('user', currentUser, 24);
+        return { isValid: true, user: currentUser };
+      } catch (error) {
+        // 如果API调用失败，自动登出
+        logout();
+        return { isValid: false };
+      }
+    },
+    enabled: !!token,
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
+  
 
   // 登录函数
   const login = async (username: string, password: string) => {
@@ -92,6 +112,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(user);
       setLocalStorageWithExpiry('token', token, 24); // 24小时过期
       setLocalStorageWithExpiry('user', user, 24);
+      
+      // 设置请求头
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
     } catch (error) {
       console.error('登录失败:', error);
@@ -112,6 +135,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(null);
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      // 清除请求头
+      delete api.defaults.headers.common['Authorization'];
+      // 清除所有查询缓存
+      queryClient.clear();
     }
   };
 
@@ -122,8 +149,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         token,
         login,
         logout,
-        isAuthenticated: !!token,
-        isLoading
+        isAuthenticated,
+        isLoading: isAuthChecking
       }}
     >
       {children}
