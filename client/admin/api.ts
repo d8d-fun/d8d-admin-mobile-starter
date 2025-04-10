@@ -2,9 +2,8 @@ import axios from 'axios';
 import type { MinioUploadPolicy, OSSUploadPolicy } from '@d8d-appcontainer/types';
 import 'dayjs/locale/zh-cn';
 import type { 
-  User, FileLibrary, FileCategory, KnowInfo,
-  AuthContextType, ThemeContextType, Attachment, ThemeSettings,
- SystemSetting, SystemSettingGroupData
+  User, FileLibrary, FileCategory, ThemeSettings,
+ SystemSetting, SystemSettingGroupData, LoginLocation, LoginLocationDetail
 } from '../share/types.ts';
 
 
@@ -40,7 +39,7 @@ interface AuthResponse {
 
 // 定义Auth API接口类型
 interface AuthAPIType {
-  login: (username: string, password: string) => Promise<AuthLoginResponse>;
+  login: (username: string, password: string, latitude?: number, longitude?: number) => Promise<AuthLoginResponse>;
   register: (username: string, email: string, password: string) => Promise<AuthResponse>;
   logout: () => Promise<AuthResponse>;
   getCurrentUser: () => Promise<User>;
@@ -54,9 +53,14 @@ interface AuthAPIType {
 // Auth相关API
 export const AuthAPI: AuthAPIType = {
   // 登录API
-  login: async (username: string, password: string) => {
+  login: async (username: string, password: string, latitude?: number, longitude?: number) => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/auth/login`, { username, password });
+      const response = await axios.post(`${API_BASE_URL}/auth/login`, {
+        username,
+        password,
+        latitude,
+        longitude
+      });
       return response.data;
     } catch (error) {
       throw error;

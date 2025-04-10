@@ -25,7 +25,24 @@ export const LoginPage = () => {
   const handleSubmit = async (values: { username: string; password: string }) => {
     try {
       setLoading(true);
-      await login(values.username, values.password);
+      
+      // 获取地理位置
+      let latitude: number | undefined;
+      let longitude: number | undefined;
+      
+      try {
+        if (navigator.geolocation) {
+          const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject);
+          });
+          latitude = position.coords.latitude;
+          longitude = position.coords.longitude;
+        }
+      } catch (geoError) {
+        console.warn('获取地理位置失败:', geoError);
+      }
+      
+      await login(values.username, values.password, latitude, longitude);
       // 登录成功后跳转到管理后台首页
       navigate('/admin/dashboard');
     } catch (error: any) {

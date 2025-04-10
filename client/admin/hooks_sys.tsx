@@ -131,10 +131,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, [token]);
   
-  const handleLogin = async (username: string, password: string): Promise<void> => {
+  const handleLogin = async (username: string, password: string, latitude?: number, longitude?: number): Promise<void> => {
     try {
       // 使用AuthAPI登录
-      const response = await AuthAPI.login(username, password);
+      const response = await AuthAPI.login(username, password, latitude, longitude);
       
       // 保存token和用户信息
       const { token: newToken, user: newUser } = response;
