@@ -360,12 +360,20 @@ export default function({ apiClient, app, moduleDir }: ModuleParams) {
               </div>
 
               {/* 管理入口按钮 */}
-              <div>
+              <div className="space-y-4">
                 <a
                   href="/admin"
                   className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
                   进入管理后台
+                </a>
+                
+                {/* 移动端入口按钮 */}
+                <a
+                  href="/mobile"
+                  className="w-full flex justify-center py-3 px-4 border border-blue-600 rounded-md shadow-sm text-lg font-medium text-blue-600 bg-white hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  进入移动端
                 </a>
               </div>
             </div>
