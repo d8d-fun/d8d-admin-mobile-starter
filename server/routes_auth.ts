@@ -54,7 +54,7 @@ export function createAuthRoutes(withAuth: WithAuth) {
   authRoutes.post('/login', async (c) => {
     try {
       const auth = c.get('auth')
-      const { username, password } = await c.req.json()
+      const { username, password, latitude, longitude } = await c.req.json()
       
       if (!username || !password) {
         return c.json({ error: '用户名和密码不能为空' }, 400)
@@ -69,7 +69,9 @@ export function createAuthRoutes(withAuth: WithAuth) {
             user_id: result.user.id,
             login_time: apiClient.database.fn.now(),
             ip_address: c.req.header('x-forwarded-for') || '未知',
-            user_agent: c.req.header('user-agent') || '未知'
+            user_agent: c.req.header('user-agent') || '未知',
+            latitude: latitude || null,
+            longitude: longitude || null
           })
         }
         

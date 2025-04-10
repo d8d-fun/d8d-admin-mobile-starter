@@ -63,9 +63,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   
 
   // 登录函数
-  const login = async (username: string, password: string) => {
+  const login = async (username: string, password: string, latitude?: number, longitude?: number) => {
     try {
-      const response = await AuthAPI.login(username, password);
+      const response = await AuthAPI.login(username, password, latitude, longitude);
       const { token, user } = response;
       
       // 保存到状态和本地存储

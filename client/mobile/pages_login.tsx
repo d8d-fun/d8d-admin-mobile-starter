@@ -25,10 +25,37 @@ const LoginPage: React.FC = () => {
     setError(null);
     
     try {
-      await login(username, password);
+      // 获取地理位置
+      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+        if (!navigator.geolocation) {
+          reject(new Error('浏览器不支持地理位置功能'));
+          return;
+        }
+        
+        navigator.geolocation.getCurrentPosition(
+          resolve,
+          (err) => reject(new Error(`获取位置失败: ${err.message}`)),
+          { timeout: 5000 }
+        );
+      });
+      
+      const { latitude, longitude } = position.coords;
+      await login(username, password, latitude, longitude);
       navigate('/');
     } catch (err) {
-      setError(handleApiError(err));
+      // 如果获取位置失败，仍然允许登录但不带位置信息
+      const error = err instanceof Error ? err : new Error(String(err));
+      if (error.message.includes('获取位置失败')) {
+        console.warn('获取位置失败:', err);
+        try {
+          await login(username, password);
+          navigate('/');
+        } catch (loginErr) {
+          setError(handleApiError(loginErr));
+        }
+      } else {
+        setError(handleApiError(err));
+      }
     } finally {
       setLoading(false);
     }
