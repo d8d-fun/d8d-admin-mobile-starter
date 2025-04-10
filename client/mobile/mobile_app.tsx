@@ -18,7 +18,7 @@ import HomePage from './pages_index.tsx';
 import LoginPage from './pages_login.tsx';
 import { GlobalConfig } from "../share/types.ts";
 import { ExclamationTriangleIcon, HomeIcon, BellIcon, UserIcon } from '@heroicons/react/24/outline';
-
+import { NotificationsPage } from './pages_messages.tsx';
 // 设置中文语言
 dayjs.locale('zh-cn');
 
@@ -257,25 +257,6 @@ const ProfilePage = () => {
     </div>
   );
 };
-
-// 添加通知页面组件
-const NotificationsPage = () => (
-  <div className="p-4">
-    <h1 className="text-2xl font-bold mb-4">通知</h1>
-    <div className="bg-white rounded-lg shadow divide-y">
-      <div className="p-4">
-        <h3 className="font-medium">系统通知</h3>
-        <p className="text-gray-500 text-sm mt-1">欢迎使用移动应用!</p>
-        <p className="text-xs text-gray-400 mt-2">今天 10:00</p>
-      </div>
-      <div className="p-4">
-        <h3 className="font-medium">活动提醒</h3>
-        <p className="text-gray-500 text-sm mt-1">您有一个新的活动邀请</p>
-        <p className="text-xs text-gray-400 mt-2">昨天 14:30</p>
-      </div>
-    </div>
-  </div>
-);
 
 // 移动端布局组件 - 包含底部导航
 const MobileLayout = () => {
