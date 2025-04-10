@@ -9,17 +9,11 @@ const log = {
 };
 // 初始化数据库
 const initDatabase = async (apiClient: APIClient) => {
-  try {
     log.api('正在执行数据库迁移...')
-    
     const migrationsResult = await apiClient.database.executeLiveMigrations(migrations)
     // log.app('数据库迁移完成 %O',migrationsResult)
     log.api('数据库迁移完成')
     return migrationsResult
-    
-  } catch (error) {
-    log.api('数据库迁移失败:', error)
-  }
 }
 export function createMigrationsRoutes(withAuth: WithAuth) {
   const migrationsRoutes = new Hono<{ Variables: Variables }>()
@@ -31,7 +25,7 @@ export function createMigrationsRoutes(withAuth: WithAuth) {
     const failedResult = migrationsResult?.find((migration) => migration.status === 'failed')
     if (failedResult) {
       log.api('数据库迁移失败 %O', failedResult)
-      return c.json({ error: '数据库迁移失败' }, 500)
+      return c.json({ error: '数据库迁移失败', failedResult }, 500)
     }
 
     return c.json({ success: true })

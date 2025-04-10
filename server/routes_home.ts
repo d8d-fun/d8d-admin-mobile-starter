@@ -16,7 +16,7 @@ export function createHomeRoutes(withAuth: WithAuth) {
         .where('audit_status', AuditStatus.APPROVED) // 使用审核状态替代启用状态
         .where('category', 'banner') // 轮播图类型
         .orderBy('created_at', 'asc') // 使用创建时间排序
-        .select('id', 'title', 'cover_url as image', 'content as link')
+        .select('id', 'title', 'cover_url', 'content')
 
       return c.json({
         message: '获取轮播图成功',

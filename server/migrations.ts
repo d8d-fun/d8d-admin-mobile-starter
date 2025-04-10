@@ -222,6 +222,53 @@ const seedInitialData: MigrationLiveDefinition = {
     
     // 3. 添加首页数据和知识库文章
     await api.table('know_info').insert([
+      // 轮播图数据 (category='banner')
+      {
+        title: '欢迎使用移动端应用',
+        content: '/welcome',
+        cover_url: 'https://images.unsplash.com/photo-1518655048521-f130df041f66?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cG9ydGZvbGlvJTIwYmFja2dyb3VuZHxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80',
+        category: 'banner',
+        sort_order: 1,
+        audit_status: AuditStatus.APPROVED,
+        is_deleted: DeleteStatus.NOT_DELETED
+      },
+      {
+        title: '新功能上线了',
+        content: '/new-features',
+        cover_url: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cG9ydGZvbGlvJTIwYmFja2dyb3VuZHxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80',
+        category: 'banner',
+        sort_order: 2,
+        audit_status: AuditStatus.APPROVED,
+        is_deleted: DeleteStatus.NOT_DELETED
+      },
+      // 新闻数据
+      {
+        title: '用户体验升级，新版本发布',
+        content: '我们很高兴地宣布，新版本已经发布，带来了更好的用户体验和更多新功能。',
+        cover_url: 'https://images.unsplash.com/photo-1496171367470-9ed9a91ea931?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTB8fHRlY2h8ZW58MHx8MHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+        category: 'news',
+        created_at: '2023-05-01T08:30:00',
+        audit_status: AuditStatus.APPROVED,
+        is_deleted: DeleteStatus.NOT_DELETED
+      },
+      {
+        title: '新的数据分析功能上线',
+        content: '新的数据分析功能让您更深入地了解您的业务数据，提供更好的决策支持。',
+        cover_url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fGNoYXJ0fGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+        category: 'news',
+        created_at: '2023-04-25T14:15:00',
+        audit_status: AuditStatus.APPROVED,
+        is_deleted: DeleteStatus.NOT_DELETED
+      },
+      {
+        title: '如何提高工作效率的5个小技巧',
+        content: '这篇文章分享了5个可以立即实施的小技巧，帮助您提高日常工作效率。',
+        category: 'news',
+        created_at: '2023-04-20T09:45:00',
+        audit_status: AuditStatus.APPROVED,
+        is_deleted: DeleteStatus.NOT_DELETED
+      },
+      // 原有知识库文章
       {
         title: '欢迎使用应用Starter',
         tags: 'starter,指南',
@@ -258,78 +305,6 @@ const seedInitialData: MigrationLiveDefinition = {
         audit_status: AuditStatus.APPROVED,
         is_deleted: DeleteStatus.NOT_DELETED
       },
-      // 轮播图数据 (category='banner')
-      {
-        id: 1,
-        title: '欢迎使用移动端应用',
-        content: '/welcome',
-        cover_url: 'https://images.unsplash.com/photo-1518655048521-f130df041f66?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cG9ydGZvbGlvJTIwYmFja2dyb3VuZHxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80',
-        category: 'banner',
-        sort_order: 1,
-        audit_status: AuditStatus.APPROVED,
-        is_deleted: DeleteStatus.NOT_DELETED
-      },
-      {
-        id: 2,
-        title: '新功能上线了',
-        content: '/new-features',
-        cover_url: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cG9ydGZvbGlvJTIwYmFja2dyb3VuZHxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80',
-        category: 'banner',
-        sort_order: 2,
-        audit_status: AuditStatus.APPROVED,
-        is_deleted: DeleteStatus.NOT_DELETED
-      },
-      // 新闻数据
-      {
-        id: 3,
-        title: '用户体验升级，新版本发布',
-        content: '我们很高兴地宣布，新版本已经发布，带来了更好的用户体验和更多新功能。',
-        cover_url: 'https://images.unsplash.com/photo-1496171367470-9ed9a91ea931?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTB8fHRlY2h8ZW58MHx8MHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
-        category: '产品更新',
-        created_at: '2023-05-01T08:30:00',
-        audit_status: AuditStatus.APPROVED,
-        is_deleted: DeleteStatus.NOT_DELETED
-      },
-      {
-        id: 4,
-        title: '新的数据分析功能上线',
-        content: '新的数据分析功能让您更深入地了解您的业务数据，提供更好的决策支持。',
-        cover_url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fGNoYXJ0fGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
-        category: '功能介绍',
-        created_at: '2023-04-25T14:15:00',
-        audit_status: AuditStatus.APPROVED,
-        is_deleted: DeleteStatus.NOT_DELETED
-      },
-      {
-        id: 5,
-        title: '如何提高工作效率的5个小技巧',
-        content: '这篇文章分享了5个可以立即实施的小技巧，帮助您提高日常工作效率。',
-        category: '使用技巧',
-        created_at: '2023-04-20T09:45:00',
-        audit_status: AuditStatus.APPROVED,
-        is_deleted: DeleteStatus.NOT_DELETED
-      },
-      // 原有知识库文章
-      {
-        id: 6,
-        title: '欢迎使用应用Starter',
-        tags: 'starter,指南',
-        content: '# 欢迎使用应用Starter\n\n这是一个基础的应用Starter，提供了用户认证、文件管理、知识库、主题管理等功能。',
-        author: '系统管理员',
-        category: '使用指南',
-        audit_status: AuditStatus.APPROVED,
-        is_deleted: DeleteStatus.NOT_DELETED
-      },
-      {
-        id: 7,
-        title: '如何使用文件管理',
-        tags: '文件,上传,管理',
-        content: '# 文件管理使用指南\n\n文件管理模块可以帮助您上传、分类和管理各种文件。',
-        author: '系统管理员',
-        category: '使用指南',
-        audit_status: AuditStatus.APPROVED,
-        is_deleted: DeleteStatus.NOT_DELETED
-      }
     ]);
     
     // 4. 添加文件分类示例
