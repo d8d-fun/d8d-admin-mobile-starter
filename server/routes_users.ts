@@ -28,7 +28,7 @@ export function createUserRoutes(withAuth: WithAuth) {
       }
       
       const total = await query.clone().count()
-      const users = await query.select('id', 'username', 'nickname', 'email', 'phone', 'role', 'created_at')
+      const users = await query.select('id', 'username', 'nickname', 'email', 'phone', 'created_at')
         .limit(pageSize).offset(offset)
       
       return c.json({

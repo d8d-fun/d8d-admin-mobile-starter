@@ -3,7 +3,9 @@ import type { MinioUploadPolicy, OSSUploadPolicy } from '@d8d-appcontainer/types
 import 'dayjs/locale/zh-cn';
 import type { 
   User, FileLibrary, FileCategory, ThemeSettings,
- SystemSetting, SystemSettingGroupData, LoginLocation, LoginLocationDetail
+ SystemSetting, SystemSettingGroupData, 
+ LoginLocation, LoginLocationDetail,
+ Message, UserMessage
 } from '../share/types.ts';
 
 
@@ -495,6 +497,90 @@ export const ChartAPI = {
   getDashboardOverview: async (): Promise<ChartDataResponse<DashboardOverviewData>> => {
     try {
       const response = await axios.get(`${API_BASE_URL}/charts/dashboard-overview`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+};
+
+// 消息API接口类型
+interface MessagesResponse {
+  data: UserMessage[];
+  pagination: {
+    total: number;
+    current: number;
+    pageSize: number;
+    totalPages: number;
+  };
+}
+
+interface MessageResponse {
+  data: Message;
+  message?: string;
+}
+
+interface MessageCountResponse {
+  count: number;
+}
+
+// 消息API
+export const MessageAPI = {
+  // 获取消息列表
+  getMessages: async (params?: {
+    page?: number,
+    pageSize?: number,
+    type?: string,
+    status?: string,
+    search?: string
+  }): Promise<MessagesResponse> => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/messages`, { params });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // 发送消息
+  sendMessage: async (data: {
+    title: string,
+    content: string,
+    type: string,
+    receiver_ids: number[]
+  }): Promise<MessageResponse> => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/messages`, data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // 获取未读消息数
+  getUnreadCount: async (): Promise<MessageCountResponse> => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/messages/count/unread`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // 标记消息为已读
+  markAsRead: async (id: number): Promise<MessageResponse> => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/messages/${id}/read`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // 删除消息
+  deleteMessage: async (id: number): Promise<MessageResponse> => {
+    try {
+      const response = await axios.delete(`${API_BASE_URL}/messages/${id}`);
       return response.data;
     } catch (error) {
       throw error;

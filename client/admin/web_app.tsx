@@ -74,7 +74,8 @@ import {
   KnowInfoPage,
   FileLibraryPage
 } from './pages_sys.tsx';
-import { 
+import { MessagesPage } from './pages_messages.tsx';
+import {
   SettingsPage,
   ThemeSettingsPage,
  } from './pages_settings.tsx';
@@ -183,6 +184,11 @@ const MainLayout = () => {
       key: '/users',
       icon: <TeamOutlined />,
       label: '用户管理',
+    },
+    {
+      key: '/messages',
+      icon: <BellOutlined />,
+      label: '消息管理',
     },
     {
       key: '/settings',
@@ -553,6 +559,11 @@ const App = () => {
         {
           path: 'file-library',
           element: <FileLibraryPage />,
+          errorElement: <ErrorPage />
+        },
+        {
+          path: 'messages',
+          element: <MessagesPage />,
           errorElement: <ErrorPage />
         },
       ],
