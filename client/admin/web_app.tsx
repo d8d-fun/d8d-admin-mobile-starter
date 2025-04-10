@@ -7,7 +7,8 @@ import {
   useNavigate,
   useLocation,
   Navigate,
-  useParams
+  useParams,
+  useRouteError
 } from 'react-router';
 import { 
   Layout, Menu, Button, Table, Space,
@@ -478,21 +479,44 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 // 错误页面组件
-const ErrorPage = ({ error }: { error?: Error }) => {
+const ErrorPage = () => {
   const { isDark } = useTheme();
+  const error = useRouteError() as any;
+  const errorMessage = error?.statusText || error?.message || '未知错误';
+  
   
   return (
-    <div className="flex flex-col items-center justify-center h-screen"
+    <div className="flex flex-col items-center justify-center min-h-screen p-4"
       style={{ color: isDark ? '#fff' : 'inherit' }}
     >
-      <h1 className="text-2xl font-bold mb-4">发生错误</h1>
-      <p className="mb-4">{error?.message || '抱歉，应用程序遇到了一些问题。'}</p>
-      <Button 
-        type="primary" 
-        onClick={() => window.location.reload()}
-      >
-        重新加载
-      </Button>
+      <div className="max-w-3xl w-full">
+        <h1 className="text-2xl font-bold mb-4">发生错误</h1>
+        <Alert 
+          type="error"
+          message={error?.message || '未知错误'}
+          description={
+            error?.stack ? (
+              <pre className="text-xs overflow-auto p-2 bg-gray-100 dark:bg-gray-800 rounded">
+                {error.stack}
+              </pre>
+            ) : null
+          }
+          className="mb-4"
+        />
+        <div className="flex gap-4">
+          <Button 
+            type="primary" 
+            onClick={() => window.location.reload()}
+          >
+            重新加载
+          </Button>
+          <Button 
+            onClick={() => window.location.href = '/admin'}
+          >
+            返回首页
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };
