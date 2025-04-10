@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getGlobalConfig } from './utils.ts';
 import type { MinioUploadPolicy, OSSUploadPolicy } from '@d8d-appcontainer/types';
 import 'dayjs/locale/zh-cn';
 import type { 
@@ -16,7 +17,7 @@ const API_BASE_URL = '/api';
 // 获取OSS完整URL
 export const getOssUrl = (path: string): string => {
   // 获取全局配置中的OSS_HOST，如果不存在使用默认值
-  const ossHost = (window.CONFIG?.OSS_BASE_URL) || '';
+  const ossHost = getGlobalConfig('OSS_BASE_URL') || '';
   // 确保path不以/开头
   const ossPath = path.startsWith('/') ? path.substring(1) : path;
   return `${ossHost}/${ossPath}`;

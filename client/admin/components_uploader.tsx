@@ -11,6 +11,7 @@ import {
   UploadOutlined,
 } from '@ant-design/icons';   
 import { uploadMinIOWithPolicy , uploadOSSWithPolicy} from '@d8d-appcontainer/api';
+import { getGlobalConfig } from './utils.ts';
 import type { MinioUploadPolicy, OSSUploadPolicy } from '@d8d-appcontainer/types';
 import 'dayjs/locale/zh-cn';
 import { OssType } from '../share/types.ts';
@@ -93,7 +94,7 @@ export const Uploader = ({
       };
       
       // 执行上传
-      const fileUrl = window.CONFIG?.OSS_TYPE === OssType.MINIO ? 
+      const fileUrl = getGlobalConfig('OSS_TYPE') === OssType.MINIO ? 
         await uploadMinIOWithPolicy(
           policy as MinioUploadPolicy,
           file,
