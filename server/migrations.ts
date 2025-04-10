@@ -390,6 +390,53 @@ const seedInitialData: MigrationLiveDefinition = {
   }
 };
 
+// 创建消息表迁移
+const createMessagesTable: MigrationLiveDefinition = {
+  name: "create_messages_table",
+  up: async (api) => {
+    await api.schema.createTable('messages', (table) => {
+      table.increments('id').primary().comment('消息ID');
+      table.string('title').notNullable().comment('消息标题');
+      table.text('content').notNullable().comment('消息内容');
+      table.enum('type', ['system', 'private', 'announce']).notNullable().comment('消息类型');
+      table.integer('sender_id').unsigned().references('id').inTable('users').onDelete('SET NULL').comment('发送者ID');
+      table.string('sender_name').comment('发送者名称');
+      table.timestamps(true, true);
+      
+      // 添加索引
+      table.index('type');
+      table.index('sender_id');
+    });
+  },
+  down: async (api) => {
+    await api.schema.dropTable('messages');
+  }
+};
+
+// 创建用户消息关联表迁移
+const createUserMessagesTable: MigrationLiveDefinition = {
+  name: "create_user_messages_table",
+  up: async (api) => {
+    await api.schema.createTable('user_messages', (table) => {
+      table.increments('id').primary().comment('关联ID');
+      table.integer('user_id').unsigned().references('id').inTable('users').onDelete('CASCADE').comment('用户ID');
+      table.integer('message_id').unsigned().references('id').inTable('messages').onDelete('CASCADE').comment('消息ID');
+      table.integer('status').defaultTo(0).comment('阅读状态(0=未读,1=已读)');
+      table.integer('is_deleted').defaultTo(0).comment('删除状态(0=未删除,1=已删除)');
+      table.timestamp('read_at').nullable().comment('阅读时间');
+      table.timestamps(true, true);
+      
+      // 添加复合索引
+      table.index(['user_id', 'status']);
+      table.index(['user_id', 'is_deleted']);
+      table.unique(['user_id', 'message_id']);
+    });
+  },
+  down: async (api) => {
+    await api.schema.dropTable('user_messages');
+  }
+};
+
 // 导出所有迁移
 export const migrations = [
   createUsersTable,
@@ -399,5 +446,7 @@ export const migrations = [
   createFileLibraryTable,
   createThemeSettingsTable,
   createSystemSettingsTable,
-  seedInitialData
+  createMessagesTable,
+  createUserMessagesTable,
+  seedInitialData,
 ];

@@ -448,3 +448,52 @@ export interface LoginLocation {
   /** 登录时间 */
   login_time?: string;
 }
+
+// 消息类型枚举
+export enum MessageType {
+  SYSTEM = 'system',   // 系统通知
+  PRIVATE = 'private', // 私信
+  ANNOUNCE = 'announce' // 公告
+}
+
+// 消息状态枚举
+export enum MessageStatus {
+  UNREAD = 0,   // 未读
+  READ = 1,     // 已读
+  DELETED = 2   // 已删除
+}
+
+// 消息状态中文映射
+export const MessageStatusNameMap: Record<MessageStatus, string> = {
+  [MessageStatus.UNREAD]: '未读',
+  [MessageStatus.READ]: '已读',
+  [MessageStatus.DELETED]: '已删除'
+};
+
+// 消息实体接口
+export interface Message {
+  id: number;
+  title: string;
+  content: string;
+  type: MessageType;
+  sender_id?: number;  // 发送者ID(系统消息可为空)
+  sender_name?: string; // 发送者名称
+  created_at: string;
+  updated_at: string;
+}
+
+// 用户消息关联接口
+export interface UserMessage {
+  id: number;
+  user_id: number;
+  message_id: number;
+  status: MessageStatus;
+  is_deleted?: DeleteStatus;
+  read_at?: string;
+  created_at: string;
+  updated_at: string;
+  
+  // 关联信息
+  message?: Message;
+  sender?: User;
+}

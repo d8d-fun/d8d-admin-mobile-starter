@@ -34,6 +34,7 @@ import { migrations } from './migrations.ts';
 // 导入基础路由
 import { createAuthRoutes } from "./routes_auth.ts";
 import { createUserRoutes } from "./routes_users.ts";
+import { createMessagesRoutes } from "./routes_messages.ts";
 
 dayjs.extend(utc)
 // 初始化debug实例
@@ -328,6 +329,7 @@ export default function({ apiClient, app, moduleDir }: ModuleParams) {
   api.route('/charts', createChartRoutes(withAuth)) // 添加图表数据路由
   api.route('/map', createMapRoutes(withAuth)) // 添加地图数据路由
   api.route('/settings', createSystemSettingsRoutes(withAuth)) // 添加系统设置路由
+  api.route('/messages', createMessagesRoutes(withAuth)) // 添加消息路由
 
   // 注册API路由
   honoApp.route('/api', api)
