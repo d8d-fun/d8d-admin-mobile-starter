@@ -161,6 +161,37 @@ export enum MapMode {
   OFFLINE = 'offline'
 }
 
+
+// 地图标记数据接口 - 基础定义
+export interface MarkerData {
+  /** 标记点经度 */
+  longitude: number;
+  
+  /** 标记点纬度 */
+  latitude: number;
+  
+  /** 标记点ID */
+  id?: string | number;
+  
+  /** 标记点标题 */
+  title?: string;
+  
+  /** 标记点描述 */
+  description?: string;
+  
+  /** 标记点图标URL */
+  iconUrl?: string;
+  
+  /** 标记点状态 */
+  status?: string;
+  
+  /** 标记点类型 */
+  type?: string;
+  
+  /** 标记点额外数据 */
+  extraData?: Record<string, any>;
+}
+
 // 审核状态枚举
 export enum AuditStatus {
   PENDING = 0,   // 待审核
@@ -424,44 +455,35 @@ export interface KnowInfo {
   updated_at: string;
 }
 
-// 登录位置详细信息
-export interface LoginLocationDetail {
-  /** 记录ID */
+// 登录位置相关类型定义
+export interface LoginLocation {
   id: number;
-  /** 用户ID */
-  user_id: number;
-  /** 登录时间 */
-  login_time: string;
-  /** IP地址 */
-  ip_address: string;
-  /** 用户代理 */
-  user_agent: string;
-  /** 纬度 */
-  latitude: number | null;
-  /** 经度 */
-  longitude: number | null;
-  /** 位置名称 */
+  loginTime: string;
+  ipAddress: string;
+  longitude: number;
+  latitude: number;
   location_name?: string;
-  /** 关联用户信息 */
-  user?: {
+  user: {
     id: number;
     username: string;
-    nickname?: string;
+    nickname: string;
   };
 }
 
-// 登录位置信息
-export interface LoginLocation {
-  /** 纬度 */
-  latitude: number | null;
-  /** 经度 */
-  longitude: number | null;
-  /** IP地址 */
-  ip_address?: string;
-  /** 用户代理 */
-  user_agent?: string;
-  /** 登录时间 */
-  login_time?: string;
+export interface LoginLocationDetail {
+  id: number;
+  user_id: number;
+  login_time: string;
+  ip_address: string;
+  longitude: number;
+  latitude: number;
+  location_name: string;
+  user_agent: string;
+  user: {
+    id: number;
+    username: string;
+    nickname: string;
+  };
 }
 
 // 消息类型枚举

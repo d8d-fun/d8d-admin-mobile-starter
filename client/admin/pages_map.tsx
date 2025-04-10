@@ -108,16 +108,18 @@ export const LoginMapPage = () => {
 
   // 渲染地图标记点
   const renderMarkers = (locations: LoginLocation[]): MarkerData[] => {
-    return locations.map(location => ({
-      id: location.id,
-      longitude: location.longitude,
-      latitude: location.latitude,
-      title: location.user.nickname || location.user.username,
-      description: `登录时间: ${dayjs(location.loginTime).format('YYYY-MM-DD HH:mm:ss')}\nIP地址: ${location.ipAddress}`,
-      status: 'online',
-      type: 'login',
-      extraData: location
-    }));
+    return locations
+      .filter(location => location.longitude !== null && location.latitude !== null)
+      .map(location => ({
+        id: location.id?.toString() || '',
+        longitude: location.longitude as number,
+        latitude: location.latitude as number,
+        title: location.user?.nickname || location.user?.username || '未知用户',
+        description: `登录时间: ${dayjs(location.login_time).format('YYYY-MM-DD HH:mm:ss')}\nIP地址: ${location.ip_address}`,
+        status: 'online',
+        type: 'login',
+        extraData: location
+      }));
   };
 
   return (
@@ -156,7 +158,9 @@ export const LoginMapPage = () => {
           <div style={{ height: '100%', minHeight: '500px' }}>
             <AMap
               markers={renderMarkers(locations)}
-              center={locations[0] ? [locations[0].longitude, locations[0].latitude] : undefined}
+              center={locations[0] && locations[0].longitude !== null && locations[0].latitude !== null 
+                ? [locations[0].longitude, locations[0].latitude] as [number, number] 
+                : undefined}
               onMarkerClick={handleMarkerClick}
               height={'100%'}
             />
@@ -179,7 +183,7 @@ export const LoginMapPage = () => {
         ) : markerDetail ? (
           <Descriptions column={1}>
             <Descriptions.Item label={<><UserOutlined /> 用户</>}>
-              {markerDetail.user.nickname || markerDetail.user.username}
+              {markerDetail.user?.nickname || markerDetail.user?.username || '未知用户'}
             </Descriptions.Item>
             <Descriptions.Item label={<><ClockCircleOutlined /> 登录时间</>}>
               {dayjs(markerDetail.login_time).format('YYYY-MM-DD HH:mm:ss')}

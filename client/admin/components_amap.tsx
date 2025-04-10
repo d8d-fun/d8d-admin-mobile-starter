@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { getGlobalConfig } from './utils.ts';
+import type { GlobalConfig } from '../share/types.ts';
 import { Spin } from 'antd';
 import './style_amap.css';
 import { MapMode, MarkerData } from '../share/types.ts';
@@ -7,9 +9,9 @@ import { MapMode, MarkerData } from '../share/types.ts';
 // 在线地图配置
 export const AMAP_ONLINE_CONFIG = {
   // 高德地图 Web API 密钥
-  API_KEY: window.CONFIG?.MAP_CONFIG?.KEY,
+  API_KEY: getGlobalConfig('MAP_CONFIG')?.KEY || '',
   // 主JS文件路径
-  MAIN_JS: 'https://webapi.amap.com/maps?v=2.0&key=' + window.CONFIG?.MAP_CONFIG?.KEY,
+  MAIN_JS: 'https://webapi.amap.com/maps?v=2.0&key=' + (getGlobalConfig('MAP_CONFIG')?.KEY || ''),
   // 插件列表
   PLUGINS: ['AMap.MouseTool', 'AMap.RangingTool', 'AMap.Scale', 'AMap.ToolBar', 'AMap.MarkerCluster'],
 };
@@ -82,6 +84,7 @@ export interface AMapInstance {
 declare global {
   interface Window {
     AMap: any;
+    CONFIG?: GlobalConfig;
   }
 }
 
@@ -338,7 +341,7 @@ const AMapComponent: React.FC<AMapProps> = ({
   height = '400px',
   center = TILE_CONFIG.DEFAULT_CENTER as [number, number],
   zoom = TILE_CONFIG.DEFAULT_ZOOM,
-  mode = window.CONFIG?.MAP_CONFIG?.MAP_MODE || MapMode.ONLINE,
+  mode = (getGlobalConfig('MAP_CONFIG')?.MAP_MODE as MapMode) || MapMode.ONLINE,
   onMarkerClick,
   onClick,
   markers = [],
