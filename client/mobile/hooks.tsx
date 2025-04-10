@@ -3,6 +3,7 @@ import axios from 'axios';
 import { getLocalStorageWithExpiry, setLocalStorageWithExpiry } from './utils.ts';
 import type { User, AuthContextType, ThemeContextType, ThemeSettings } from '../share/types.ts';
 import { ThemeMode, FontSize, CompactMode } from '../share/types.ts';
+import { AuthAPI, ThemeAPI } from './api.ts';
 
 // 创建axios实例
 const api = axios.create({
@@ -97,8 +98,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // 登录函数
   const login = async (username: string, password: string) => {
     try {
-      const response = await api.post('/auth/login', { username, password });
-      const { token, user } = response.data;
+      const response = await AuthAPI.login(username, password);
+      const { token, user } = response;
       
       // 保存到状态和本地存储
       setToken(token);
@@ -117,7 +118,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     try {
       // 调用登出API
-      await api.post('/auth/logout');
+      await AuthAPI.logout();
     } catch (error) {
       console.error('登出API调用失败:', error);
     } finally {
@@ -167,7 +168,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const saveTheme = async (theme: Partial<ThemeSettings>): Promise<ThemeSettings> => {
     try {
       const updatedTheme = { ...currentTheme, ...theme };
-      const { data } = await api.post('/theme/save', updatedTheme);
+      const data = await ThemeAPI.updateThemeSettings(updatedTheme);
       
       setCurrentTheme(data);
       localStorage.setItem('theme', JSON.stringify(data));
@@ -182,7 +183,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // 重置主题
   const resetTheme = async (): Promise<ThemeSettings> => {
     try {
-      const { data } = await api.post('/theme/reset');
+      const data = await ThemeAPI.resetThemeSettings();
       
       setCurrentTheme(data);
       localStorage.setItem('theme', JSON.stringify(data));

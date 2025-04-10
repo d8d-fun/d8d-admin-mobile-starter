@@ -8,14 +8,23 @@ import {
   useLocation
 } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { AuthProvider, ThemeProvider, useAuth } from './hooks.tsx';
-import HomePage from './pages/index.tsx';
-import LoginPage from './pages/login.tsx';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
+import { AuthProvider, ThemeProvider, useAuth } from './hooks.tsx';
+import HomePage from './pages_index.tsx';
+import LoginPage from './pages_login.tsx';
+import { GlobalConfig } from "../share/types.ts";
 
 // 设置中文语言
 dayjs.locale('zh-cn');
+
+// 声明全局配置对象类型
+declare global {
+  interface Window {
+    CONFIG?: GlobalConfig;
+  }
+}
+
 
 // 创建QueryClient实例
 const queryClient = new QueryClient();

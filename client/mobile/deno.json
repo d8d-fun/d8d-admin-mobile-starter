@@ -14,5 +14,8 @@
     "@tanstack/react-query": "https://esm.d8d.fun/@tanstack/react-query@5.67.1?deps=react@19.0.0,react-dom@19.0.0",
     "@d8d-appcontainer/api": "https://esm.d8d.fun/@d8d-appcontainer/api@3.0.47",
     "@d8d-appcontainer/types": "https://esm.d8d.fun/@d8d-appcontainer/types@3.0.47"
+  },
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "esnext", "deno.ns"]
   }
 } 

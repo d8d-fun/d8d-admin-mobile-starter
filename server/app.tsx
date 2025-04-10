@@ -439,6 +439,23 @@ export default function({ apiClient, app, moduleDir }: ModuleParams) {
     prodPath: "admin/web_app.js"
   }, GLOBAL_CONFIG.APP_NAME))
 
+  // 移动端路由
+  honoApp.get('/mobile', createHtmlWithConfig({
+    src: "https://esm.d8d.fun/xb", 
+    href: "/client/mobile/mobile_app.tsx", 
+    denoJson: "/client/mobile/deno.json", 
+    refresh: true, 
+    prodPath: "mobile/mobile_app.js"
+  }, GLOBAL_CONFIG.APP_NAME))
+  
+  honoApp.get('/mobile/*', createHtmlWithConfig({
+    src: "https://esm.d8d.fun/xb", 
+    href: "/client/mobile/mobile_app.tsx", 
+    denoJson: "/client/mobile/deno.json", 
+    refresh: true, 
+    prodPath: "mobile/mobile_app.js"
+  }, GLOBAL_CONFIG.APP_NAME))
+
   const staticRoutes = serveStatic({ 
     root: moduleDir,
     onFound: async (path: string, c: HonoContext) => {

@@ -6,8 +6,8 @@ import {
   NewspaperIcon, 
   BellIcon 
 } from '@heroicons/react/24/outline';
-import { useAuth } from '../hooks.tsx';
-import { formatRelativeTime } from '../utils.ts';
+import { useAuth } from './hooks.tsx';
+import { formatRelativeTime } from './utils.ts';
 
 interface BannerItem {
   id: number;

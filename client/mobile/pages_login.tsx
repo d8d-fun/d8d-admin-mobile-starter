@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { ArrowRightIcon, LockClosedIcon, UserIcon } from '@heroicons/react/24/outline';
-import { useAuth } from '../hooks.tsx';
-import { handleApiError } from '../utils.ts';
+import { useAuth } from './hooks.tsx';
+import { handleApiError } from './utils.ts';
 
 // 登录页面组件
 const LoginPage: React.FC = () => {
