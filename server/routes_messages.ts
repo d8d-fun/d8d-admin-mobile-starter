@@ -9,7 +9,6 @@ export function createMessagesRoutes(withAuth: WithAuth) {
   // 发送消息
   messagesRoutes.post('/', withAuth, async (c) => {
     try {
-      const auth = c.get('auth')
       const apiClient = c.get('apiClient')
       const { title, content, type, receiver_ids } = await c.req.json()
 
@@ -42,7 +41,10 @@ export function createMessagesRoutes(withAuth: WithAuth) {
 
       await apiClient.database.table('user_messages').insert(userMessages)
 
-      return c.json({ message: '消息发送成功', id: messageId }, 201)
+      return c.json({
+        message: '消息发送成功',
+        data: { id: messageId }
+      }, 201)
     } catch (error) {
       console.error('发送消息失败:', error)
       return c.json({ error: '发送消息失败' }, 500)
@@ -74,9 +76,23 @@ export function createMessagesRoutes(withAuth: WithAuth) {
       if (type) query.where('m.type', type)
       if (status) query.where('um.status', status)
 
+      const countQuery = query.clone()
       const messages = await query
+      
+      // 获取总数用于分页
+      const total = await countQuery.count()
+      const totalCount = Number(total)
+      const totalPages = Math.ceil(totalCount / pageSize)
 
-      return c.json(messages)
+      return c.json({
+        data: messages,
+        pagination: {
+          total: totalCount,
+          current: page,
+          pageSize,
+          totalPages
+        }
+      })
     } catch (error) {
       console.error('获取消息列表失败:', error)
       return c.json({ error: '获取消息列表失败' }, 500)
@@ -119,7 +135,10 @@ export function createMessagesRoutes(withAuth: WithAuth) {
           })
       }
 
-      return c.json(message)
+      return c.json({
+        message: '获取消息成功',
+        data: message
+      })
     } catch (error) {
       console.error('获取消息详情失败:', error)
       return c.json({ error: '获取消息详情失败' }, 500)
