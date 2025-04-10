@@ -115,7 +115,7 @@ export const LoginMapPage = () => {
         longitude: location.longitude as number,
         latitude: location.latitude as number,
         title: location.user?.nickname || location.user?.username || '未知用户',
-        description: `登录时间: ${dayjs(location.login_time).format('YYYY-MM-DD HH:mm:ss')}\nIP地址: ${location.ip_address}`,
+        description: `登录时间: ${dayjs(location.loginTime).format('YYYY-MM-DD HH:mm:ss')}\nIP地址: ${location.ipAddress}`,
         status: 'online',
         type: 'login',
         extraData: location
