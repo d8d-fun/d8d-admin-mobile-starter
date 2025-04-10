@@ -25,7 +25,11 @@
     "@d8d-appcontainer/types": "https://esm.d8d.fun/@d8d-appcontainer/types@3.0.47",
     "@d8d-appcontainer/api": "https://esm.d8d.fun/@d8d-appcontainer/api@3.0.47",
     "@ant-design/plots": "https://esm.d8d.fun/@ant-design/plots@2.1.13?deps=react@19.0.0,react-dom@19.0.0",
-    "lodash": "https://esm.d8d.fun/lodash@4.17.21"
+    "lodash": "https://esm.d8d.fun/lodash@4.17.21",
+    "react-hook-form": "https://esm.d8d.fun/react-hook-form@7.55.0?deps=react@19.0.0,react-dom@19.0.0",    
+    "@heroicons/react/24/outline": "https://esm.d8d.fun/@heroicons/react@2.1.1/24/outline?deps=react@19.0.0,react-dom@19.0.0",
+    "@heroicons/react/24/solid": "https://esm.d8d.fun/@heroicons/react@2.1.1/24/solid?deps=react@19.0.0,react-dom@19.0.0"
+    
   },
   "compilerOptions": {
     "lib": ["dom", "dom.iterable", "esnext", "deno.ns"]

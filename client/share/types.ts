@@ -84,6 +84,14 @@ export enum CompactMode {
   COMPACT = 1  // 紧凑模式
 }
 
+// 颜色方案类型
+export interface ColorScheme {
+  name: string;
+  primary: string;
+  background: string;
+  text: string;
+}
+
 // 主题设置类型
 export interface ThemeSettings {
   /** 主键ID */
@@ -94,6 +102,9 @@ export interface ThemeSettings {
   
   /** 主题模式(light/dark) */
   theme_mode: ThemeMode;
+  
+  /** 主题方案名称 */
+  scheme_name?: string;
   
   /** 主题主色 */
   primary_color: string;

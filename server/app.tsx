@@ -413,7 +413,7 @@ export default function({ apiClient, app, moduleDir }: ModuleParams) {
   honoApp.get('/admin', createHtmlWithConfig({
     src: "https://esm.d8d.fun/xb", 
     href: "/client/admin/web_app.tsx", 
-    denoJson: "/client/admin/deno.json", 
+    denoJson: "/deno.json", 
     refresh: true, 
     prodPath: "admin/web_app.js"
   }, GLOBAL_CONFIG.APP_NAME))
@@ -421,7 +421,7 @@ export default function({ apiClient, app, moduleDir }: ModuleParams) {
   honoApp.get('/admin/*', createHtmlWithConfig({
     src: "https://esm.d8d.fun/xb", 
     href: "/client/admin/web_app.tsx", 
-    denoJson: "/client/admin/deno.json", 
+    denoJson: "/deno.json", 
     refresh: true, 
     prodPath: "admin/web_app.js"
   }, GLOBAL_CONFIG.APP_NAME))
@@ -430,7 +430,7 @@ export default function({ apiClient, app, moduleDir }: ModuleParams) {
   honoApp.get('/mobile', createHtmlWithConfig({
     src: "https://esm.d8d.fun/xb", 
     href: "/client/mobile/mobile_app.tsx", 
-    denoJson: "/client/mobile/deno.json", 
+    denoJson: "/deno.json", 
     refresh: true, 
     prodPath: "mobile/mobile_app.js"
   }, GLOBAL_CONFIG.APP_NAME))
@@ -438,7 +438,7 @@ export default function({ apiClient, app, moduleDir }: ModuleParams) {
   honoApp.get('/mobile/*', createHtmlWithConfig({
     src: "https://esm.d8d.fun/xb", 
     href: "/client/mobile/mobile_app.tsx", 
-    denoJson: "/client/mobile/deno.json", 
+    denoJson: "/deno.json", 
     refresh: true, 
     prodPath: "mobile/mobile_app.js"
   }, GLOBAL_CONFIG.APP_NAME))
@@ -466,6 +466,7 @@ export default function({ apiClient, app, moduleDir }: ModuleParams) {
   })
   
   // 静态资源路由
+  honoApp.get('/deno.json', staticRoutes)
   honoApp.get('/client/*', staticRoutes)
   honoApp.get('/amap/*', staticRoutes)
   honoApp.get('/tailwindcss@3.4.16/*', staticRoutes)

@@ -25,13 +25,14 @@ import weekday from 'dayjs/plugin/weekday';
 import localeData from 'dayjs/plugin/localeData';
 import 'dayjs/locale/zh-cn';
 import type { 
-  FileLibrary, FileCategory, KnowInfo, SystemSetting, SystemSettingValue
+  FileLibrary, FileCategory, KnowInfo, SystemSetting, SystemSettingValue,
+  ColorScheme
 } from '../share/types.ts';
+import { ThemeMode } from '../share/types.ts';
 
 import {
   SystemSettingGroup,
   SystemSettingKey,
-  ThemeMode,
   FontSize,
   CompactMode, 
   AllowedFileType
@@ -73,67 +74,59 @@ const GROUP_DESCRIPTIONS: Record<typeof SystemSettingGroup[keyof typeof SystemSe
   [SystemSettingGroup.NOTIFICATION]: '配置系统通知的触发条件'
 };
 
-// 定义预设配色方案
-const COLOR_SCHEMES = {
-  DEFAULT: {
-    name: '默认',
-    primary: '#1890ff',
-    background: '#f0f2f5',
-    text: '#000000'
+// 定义预设配色方案 - 按明暗模式分组
+const COLOR_SCHEMES: Record<ThemeMode, Record<string, ColorScheme>> = {
+  [ThemeMode.LIGHT]: {
+    DEFAULT: {
+      name: '默认浅色',
+      primary: '#1890ff',
+      background: '#f0f2f5',
+      text: '#000000'
+    },
+    BLUE: {
+      name: '蓝色',
+      primary: '#096dd9', 
+      background: '#e6f7ff',
+      text: '#003a8c'
+    },
+    GREEN: {
+      name: '绿色',
+      primary: '#52c41a',
+      background: '#f6ffed',
+      text: '#135200'
+    },
+    WARM: {
+      name: '暖橙',
+      primary: '#fa8c16',
+      background: '#fff7e6',
+      text: '#873800'
+    }
   },
-  DARK: {
-    name: '深色',
-    primary: '#177ddc',
-    background: '#141414',
-    text: '#ffffff'
-  },
-  LIGHT: {
-    name: '浅色',
-    primary: '#40a9ff',
-    background: '#ffffff',
-    text: '#000000'
-  },
-  BLUE: {
-    name: '蓝色',
-    primary: '#096dd9',
-    background: '#e6f7ff',
-    text: '#003a8c'
-  },
-  GREEN: {
-    name: '绿色',
-    primary: '#52c41a',
-    background: '#f6ffed',
-    text: '#135200'
-  },
-  WARM: {
-    name: '暖橙',
-    primary: '#fa8c16',
-    background: '#fff7e6',
-    text: '#873800'
-  },
-  SUNSET: {
-    name: '日落',
-    primary: '#f5222d',
-    background: '#fff1f0',
-    text: '#820014'
-  },
-  GOLDEN: {
-    name: '金色',
-    primary: '#faad14',
-    background: '#fffbe6',
-    text: '#614700'
-  },
-  CORAL: {
-    name: '珊瑚',
-    primary: '#ff7a45',
-    background: '#fff2e8',
-    text: '#ad2102'
-  },
-  ROSE: {
-    name: '玫瑰',
-    primary: '#eb2f96',
-    background: '#fff0f6',
-    text: '#9e1068'
+  [ThemeMode.DARK]: {
+    DEFAULT: {
+      name: '默认深色',
+      primary: '#177ddc',
+      background: '#141414',
+      text: '#ffffff'
+    },
+    MIDNIGHT: {
+      name: '午夜蓝',
+      primary: '#1a3b7a',
+      background: '#0a0a1a',
+      text: '#e0e0e0'
+    },
+    FOREST: {
+      name: '森林',
+      primary: '#2e7d32',
+      background: '#121212',
+      text: '#e0e0e0'
+    },
+    SUNSET: {
+      name: '日落',
+      primary: '#f5222d',
+      background: '#1a1a1a',
+      text: '#ffffff'
+    }
   }
 };
 
@@ -411,8 +404,10 @@ export const ThemeSettingsPage = () => {
   const [loading, setLoading] = useState(false);
 
   // 处理配色方案选择
-  const handleColorSchemeChange = (schemeName: keyof typeof COLOR_SCHEMES) => {
-    const scheme = COLOR_SCHEMES[schemeName];
+  const handleColorSchemeChange = (schemeName: string) => {
+    const currentMode = form.getFieldValue('theme_mode') as ThemeMode;
+    const scheme = COLOR_SCHEMES[currentMode][schemeName];
+    if (!scheme) return;
     form.setFieldsValue({
       primary_color: scheme.primary,
       background_color: scheme.background,
@@ -486,10 +481,13 @@ export const ThemeSettingsPage = () => {
             {/* 配色方案选择 */}
             <Form.Item label="预设配色方案">
               <Space wrap>
-                {Object.entries(COLOR_SCHEMES).map(([key, scheme]) => (
+                {Object.entries(COLOR_SCHEMES[form.getFieldValue('theme_mode') as ThemeMode]).map(([key, scheme]) => (
                   <Button
                     key={key}
-                    onClick={() => handleColorSchemeChange(key as keyof typeof COLOR_SCHEMES)}
+                    onClick={() => {
+                      handleColorSchemeChange(key);
+                      form.setFieldValue('scheme_name', scheme.name);
+                    }}
                     style={{
                       backgroundColor: scheme.background,
                       color: scheme.text,

@@ -1,7 +1,6 @@
 {
   "version": "4",
   "redirects": {
-    "http://esm.d8d.fun/@types/react@~19.0.12/index.d.ts": "https://esm.d8d.fun/@types/react@19.0.14/index.d.ts",
     "https://esm.d8d.fun/@antv/component@^2.1.2?target=denonext": "https://esm.d8d.fun/@antv/component@2.1.2?target=denonext",
     "https://esm.d8d.fun/@antv/coord@^0.4.7?target=denonext": "https://esm.d8d.fun/@antv/coord@0.4.7?target=denonext",
     "https://esm.d8d.fun/@antv/event-emitter@^0.1.3?target=denonext": "https://esm.d8d.fun/@antv/event-emitter@0.1.3?target=denonext",
