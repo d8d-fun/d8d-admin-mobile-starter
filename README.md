@@ -16,6 +16,15 @@
 - **日期处理**：Day.js
 - **网络请求**：Axios
 
+## 功能模块
+
+- **用户认证与管理** - 登录、注册、用户信息管理
+- **系统设置** - 站点信息、主题配置、全局参数设置
+- **文件管理** - 文件上传、分类管理
+- **地图组件** - 在线/离线地图、位置标记、地图交互
+- **图表组件** - 数据可视化图表
+- **移动端适配** - 响应式设计，支持移动端访问
+
 ## 目录结构
 
 - `asset/` - 前端资源文件
@@ -27,18 +36,9 @@
 - `migrations.ts` - 数据库迁移
 - `deno.json` - Deno配置文件
 
-## 功能模块
+## 在D8D(多八多)平台运行
 
-- **用户认证与管理** - 登录、注册、用户信息管理
-- **系统设置** - 站点信息、主题配置、全局参数设置
-- **文件管理** - 文件上传、分类管理
-- **地图组件** - 在线/离线地图、位置标记、地图交互
-- **图表组件** - 数据可视化图表
-- **移动端适配** - 响应式设计，支持移动端访问
-
-## 平台部署说明
-
-本应用在 [D8D开发者平台](https://www.d8d.fun) 上可以直接运行，无需复杂部署：
+本应用在 [D8D(多八多)开发者平台](https://www.d8d.fun) 上可以直接运行，无需复杂部署：
 
 1. 访问 [www.d8d.fun](https://www.d8d.fun) 网站并注册账号
 2. 登录后进入开发者控制台
@@ -48,7 +48,17 @@
 6. 完成创建后，直接点击"预览"按钮即可运行应用，无需额外部署步骤
 7. 系统会自动初始化并启动应用，可直接在浏览器中访问和使用
 
-## 快速开始
+### D8D(多八多)平台专属配置
+
+在D8D(多八多)平台运行时，可以通过平台的"应用配置"面板设置以下内容：
+
+- 应用资源限制（CPU、内存等）
+- 公网访问设置
+- 域名绑定
+- 自动备份
+- 日志记录级别
+
+## 本地开发指南
 
 ### 环境要求
 
@@ -72,27 +82,112 @@ OSS_BASE_URL=https://your-oss-url.com
 # 地图配置
 MAP_MODE=online  # 可选值: online, offline
 AMAP_KEY=您的地图API密钥
+
+# API客户端配置
+SERVER_URL=https://app-server.d8d.fun
+WORKSPACE_KEY=您的工作空间密钥  # 在多八多(www.d8d.fun)平台注册开通工作空间后获取
 ```
 
-### 启动应用
+### 本地启动应用
 
-#### 本地开发环境
+要在本地运行此应用，需要创建一个启动文件：
+
+1. 创建一个名为`run_app.ts`的新文件（文件名可自定义）
+2. 将下面的代码复制到该文件中：
+
+```typescript
+// 导入所需模块
+import { Hono } from 'hono'
+import { APIClient } from '@d8d-appcontainer/api'
+import debug from "debug"
+import { cors } from 'hono/cors'
+
+// 初始化debug实例
+const log = {
+  app: debug('app:server'),
+  auth: debug('auth:server'),
+  api: debug('api:server'),
+  debug: debug('debug:server')
+}
+
+// 启用所有日志
+Object.values(log).forEach(logger => logger.enabled = true)
+
+// 初始化 API Client
+const getApiClient = async (workspaceKey: string, serverUrl?: string) => {
+  try {
+    log.api('正在初始化API Client实例')
+    
+    const apiClient = await APIClient.getInstance({
+      scope: 'user',
+      config: {
+        serverUrl: serverUrl || Deno.env.get('SERVER_URL') || 'https://app-server.d8d.fun',
+        workspaceKey: workspaceKey,
+        type: 'http',
+      }
+    })
+    
+    log.api('API Client初始化成功')
+    return apiClient
+  } catch (error) {
+    log.api('API Client初始化失败:', error)
+    throw error
+  }
+}
+
+// 创建Hono应用实例
+const app = new Hono()
+
+// 注册CORS中间件
+app.use('/*', cors())
+
+// 动态加载并运行模板
+const runTemplate = async () => {
+  try {
+    // 创建基础app实例
+    const moduleApp = new Hono()
+    
+    // 初始化API Client
+    // 注意：WORKSPACE_KEY 需要在 多八多(www.d8d.fun) 平台注册并开通工作空间后获取
+    const workspaceKey = Deno.env.get('WORKSPACE_KEY') || ''
+    if (!workspaceKey) {
+      console.warn('未设置WORKSPACE_KEY，请前往 多八多(www.d8d.fun) 注册并开通工作空间以获取密钥')
+    }
+    const apiClient = await getApiClient(workspaceKey)
+    
+    // 导入模板主模块
+    const templateModule = await import('./app.tsx')
+    
+    if (templateModule.default) {
+      // 传入必要参数并初始化应用
+      const appInstance = templateModule.default({
+        apiClient: apiClient,
+        app: moduleApp,
+        moduleDir: './admin-mobile-starter'
+      })
+      
+      // 启动服务器
+      Deno.serve({ port: 8000 }, appInstance.fetch)
+      console.log('应用已启动，监听端口: 8000')
+    }
+  } catch (error) {
+    console.error('模板加载失败:', error)
+  }
+}
+
+// 执行模板
+runTemplate()
+```
+
+3. 运行该文件：
 
 ```bash
-# 开发模式启动
-deno run -A app.tsx
-
-# 或使用配置文件启动
-deno run -A --config=deno.json app.tsx
+deno run -A run_app.ts
 ```
 
-#### 在D8D平台运行
+> **注意**：上述代码用于本地运行app.tsx。SERVER_URL默认值为`app-server.d8d.fun`，WORKSPACE_KEY需要在 [多八多(www.d8d.fun)](https://www.d8d.fun) 平台注册并开通工作空间后获取。
 
-1. 在D8D平台上创建应用后，可以直接在平台提供的在线编辑器中修改代码
-2. 完成代码修改后，**直接点击"预览"按钮**即可运行应用，无需部署
-3. 预览模式下，应用会立即启动并可在浏览器中访问测试
-
-## 配置说明
+## 系统配置说明
 
 系统配置可通过环境变量或数据库中的系统设置进行管理，支持以下配置项：
 
@@ -103,21 +198,11 @@ deno run -A --config=deno.json app.tsx
 - API 基础路径
 - 文件存储方式
 
-### D8D平台专属配置
-
-在D8D平台运行时，可以通过平台的"应用配置"面板设置以下内容：
-
-- 应用资源限制（CPU、内存等）
-- 公网访问设置
-- 域名绑定
-- 自动备份
-- 日志记录级别
-
 ## 数据库迁移
 
 系统首次启动时会自动执行数据库迁移，创建必要的表结构和初始数据。
 
-## 自定义开发
+## 开发者扩展指南
 
 ### 添加新路由
 
@@ -133,4 +218,4 @@ deno run -A --config=deno.json app.tsx
 
 ---
 
-© 2023 D8D. 保留所有权利。 
+© 2025 多八多(D8D). 保留所有权利。 
