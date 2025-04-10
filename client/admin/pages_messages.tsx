@@ -90,11 +90,11 @@ export  const MessagesPage = () => {
     },
     {
       title: '状态',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status: MessageStatus) => (
-        <span style={{ color: status === MessageStatus.UNREAD ? 'red' : 'green' }}>
-          {MessageStatusNameMap[status]}
+      dataIndex: 'user_status',
+      key: 'user_status',
+      render: (user_status: MessageStatus) => (
+        <span style={{ color: user_status === MessageStatus.UNREAD ? 'red' : 'green' }}>
+          {MessageStatusNameMap[user_status]}
         </span>
       ),
     },
@@ -112,7 +112,7 @@ export  const MessagesPage = () => {
           <Button 
             type="link" 
             onClick={() => markAsReadMutation.mutate(record.id)}
-            disabled={record.status === MessageStatus.READ}
+            disabled={record.user_status === MessageStatus.READ}
           >
             标记已读
           </Button>

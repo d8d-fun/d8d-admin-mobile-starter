@@ -487,7 +487,10 @@ export interface UserMessage {
   id: number;
   user_id: number;
   message_id: number;
-  status: MessageStatus;
+  title: string;
+  content: string;
+  user_status: MessageStatus;
+  user_message_id: number;
   is_deleted?: DeleteStatus;
   read_at?: string;
   created_at: string;

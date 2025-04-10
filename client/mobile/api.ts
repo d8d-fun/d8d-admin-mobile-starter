@@ -5,7 +5,7 @@ import type {
   User, FileLibrary, FileCategory, ThemeSettings,
   SystemSetting, SystemSettingGroupData, 
   LoginLocation, LoginLocationDetail,
-  Message, MessageType, MessageStatus
+  Message, MessageType, MessageStatus, UserMessage
 } from '../share/types.ts';
 
 
@@ -608,7 +608,7 @@ export interface MessageResponse {
 }
 
 export interface MessagesResponse {
-  data: Message[];
+  data: UserMessage[];
   pagination: {
     total: number;
     current: number;

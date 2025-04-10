@@ -190,5 +190,30 @@ export function createMessagesRoutes(withAuth: WithAuth) {
     }
   })
 
+  // 标记消息为已读
+  messagesRoutes.post('/:id/read', withAuth, async (c) => {
+    try {
+      const apiClient = c.get('apiClient')
+      const user = c.get('user')
+      if (!user) return c.json({ error: '未授权访问' }, 401)
+      
+      const messageId = c.req.param('id')
+
+      await apiClient.database.table('user_messages')
+        .where('user_id', user.id)
+        .where('message_id', messageId)
+        .update({
+          status: MessageStatus.READ,
+          read_at: apiClient.database.fn.now(),
+          updated_at: apiClient.database.fn.now()
+        })
+
+      return c.json({ message: '消息已标记为已读' })
+    } catch (error) {
+      console.error('标记消息为已读失败:', error)
+      return c.json({ error: '标记消息为已读失败' }, 500)
+    }
+  })
+
   return messagesRoutes
 }
