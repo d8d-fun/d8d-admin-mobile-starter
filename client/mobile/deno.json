@@ -1,0 +1,18 @@
+{
+  "imports": {
+    "react": "https://esm.d8d.fun/react@19.0.0?deps=react@19.0.0,react-dom@19.0.0",
+    "react-dom": "https://esm.d8d.fun/react-dom@19.0.0?deps=react@19.0.0,react-dom@19.0.0",
+    "react-dom/client": "https://esm.d8d.fun/react-dom@19.0.0/client?deps=react@19.0.0,react-dom@19.0.0",
+    "react-router": "https://esm.d8d.fun/react-router@7.3.0?deps=react@19.0.0,react-dom@19.0.0",
+    "@heroicons/react/24/outline": "https://esm.d8d.fun/@heroicons/react@2.1.1/24/outline?deps=react@19.0.0",
+    "@heroicons/react/24/solid": "https://esm.d8d.fun/@heroicons/react@2.1.1/24/solid?deps=react@19.0.0",
+    "axios": "https://esm.d8d.fun/axios@1.6.7",
+    "dayjs": "https://esm.d8d.fun/dayjs@1.11.13",
+    "dayjs/plugin/weekday": "https://esm.d8d.fun/dayjs@1.11.13/plugin/weekday",
+    "dayjs/plugin/localeData": "https://esm.d8d.fun/dayjs@1.11.13/plugin/localeData",
+    "dayjs/locale/zh-cn": "https://esm.d8d.fun/dayjs@1.11.13/locale/zh-cn",
+    "@tanstack/react-query": "https://esm.d8d.fun/@tanstack/react-query@5.67.1?deps=react@19.0.0,react-dom@19.0.0",
+    "@d8d-appcontainer/api": "https://esm.d8d.fun/@d8d-appcontainer/api@3.0.47",
+    "@d8d-appcontainer/types": "https://esm.d8d.fun/@d8d-appcontainer/types@3.0.47"
+  }
+} 

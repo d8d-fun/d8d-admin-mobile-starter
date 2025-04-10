@@ -1,19 +1,8 @@
 import { Hono } from "hono";
 import debug from "debug";
-import type {
-  FileLibrary,
-  FileCategory,
-  KnowInfo,
-  ThemeSettings,
-} from "./asset/share/types.ts";
-
 import {
-  EnableStatus,
   DeleteStatus,
-  ThemeMode,
-  FontSize,
-  CompactMode,
-} from "./asset/share/types.ts";
+} from "../client/share/types.ts";
 
 import type { Variables, WithAuth } from "./app.tsx";
 

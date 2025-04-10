@@ -309,3 +309,102 @@ export enum AllowedFileType {
 
 // 允许的文件类型列表（用于系统设置）
 export const ALLOWED_FILE_TYPES = Object.values(AllowedFileType).join(',');
+
+// 文件库接口
+export interface FileLibrary {
+  /** 主键ID */
+  id: number;
+  
+  /** 文件名称 */
+  file_name: string;
+  
+  /** 原始文件名 */
+  original_filename?: string;
+  
+  /** 文件路径 */
+  file_path: string;
+  
+  /** 文件类型 */
+  file_type: string;
+  
+  /** 文件大小(字节) */
+  file_size: number;
+  
+  /** 上传用户ID */
+  uploader_id?: number;
+  
+  /** 上传者名称 */
+  uploader_name?: string;
+  
+  /** 文件分类 */
+  category_id?: number;
+  
+  /** 文件标签 */
+  tags?: string;
+  
+  /** 文件描述 */
+  description?: string;
+  
+  /** 下载次数 */
+  download_count: number;
+  
+  /** 是否禁用 (0否 1是) */
+  is_disabled?: EnableStatus;
+  
+  /** 是否被删除 (0否 1是) */
+  is_deleted?: DeleteStatus;
+  
+  /** 创建时间 */
+  created_at: string;
+  
+  /** 更新时间 */
+  updated_at: string;
+}
+
+// 文件分类接口
+export interface FileCategory {
+  id: number;
+  name: string;
+  code: string;
+  description?: string;
+  is_deleted?: DeleteStatus;
+  created_at: string;
+  updated_at: string;
+} 
+
+
+// 知识库表
+export interface KnowInfo {
+  /** 主键ID */
+  id: number;
+  
+  /** 文章的标题 */
+  title?: string;
+  
+  /** 文章的标签 */
+  tags?: string;
+  
+  /** 文章的内容 */
+  content?: string;
+  
+  /** 文章的作者 */
+  author?: string;
+  
+  /** 文章的分类 */
+  category?: string;
+  
+  /** 文章的封面图片URL */
+  cover_url?: string;
+  
+  /** 审核状态 */
+  audit_status?: number;
+  
+  /** 是否被删除 (0否 1是) */
+  is_deleted?: number;
+  
+  /** 创建时间 */
+  created_at: Date;
+  
+  /** 更新时间 */
+  updated_at: Date;
+}

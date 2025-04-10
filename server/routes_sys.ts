@@ -7,7 +7,7 @@ import type {
   ThemeSettings,
   SystemSetting,
   SystemSettingGroupData,
-} from "./asset/share/types.ts";
+} from "../client/share/types.ts";
 
 import {
   EnableStatus,
@@ -15,7 +15,7 @@ import {
   ThemeMode,
   FontSize,
   CompactMode,
-} from "./asset/share/types.ts";
+} from "../client/share/types.ts";
 
 import type { Variables, WithAuth } from "./app.tsx";
 

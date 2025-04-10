@@ -1,17 +1,12 @@
 import type { MigrationLiveDefinition } from '@d8d-appcontainer/types'
 
 import {
-  DeviceCategory, DeviceStatus, AlertLevel, AlertStatus, EnableStatus, DeleteStatus,
-  HandleType, ProblemType, NotifyType, ServerType, AssetTransferType, AuditStatus,
-  DeviceProtocolType, MetricType, ThemeMode, FontSize, CompactMode,
-
-  AssetStatus, NetworkStatus, PacketLossStatus,
-  ZichanArea, ZichanCategory, DeviceType, DeviceInstance, RackInfo, RackServerType, RackServer, ZichanTransLog, DeviceAlertRule,
-  ZichanInfo, AlertNotifyConfig, KnowInfo,
+  EnableStatus, DeleteStatus,
+  AuditStatus, ThemeMode, FontSize, CompactMode,
   SystemSettingKey,
   SystemSettingGroup,
   ALLOWED_FILE_TYPES,
-} from './asset/share/types.ts';
+} from '../client/share/types.ts';
 
 // 定义用户表迁移
 const createUsersTable: MigrationLiveDefinition = {

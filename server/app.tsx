@@ -11,8 +11,8 @@ import { APIClient } from '@d8d-appcontainer/api'
 import debug from "debug"
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-import type { SystemSettingRecord, GlobalConfig } from './asset/share/types.ts';
-import { SystemSettingKey, OssType, MapMode } from './asset/share/types.ts';
+import type { SystemSettingRecord, GlobalConfig } from '../client/share/types.ts';
+import { SystemSettingKey, OssType, MapMode } from '../client/share/types.ts';
 
 import {
   createKnowInfoRoutes,
@@ -388,7 +388,7 @@ export default function({ apiClient, app, moduleDir }: ModuleParams) {
             <title>{title}</title>
             
             {isProd ? (
-              <script type="module" src={scriptConfig.prodSrc || `/asset_dist/${scriptConfig.prodPath}`}></script>
+              <script type="module" src={scriptConfig.prodSrc || `/client_dist/${scriptConfig.prodPath}`}></script>
             ) : (
               <script src={scriptConfig.src} href={scriptConfig.href} deno-json={scriptConfig.denoJson} refresh={scriptConfig.refresh}></script>
             )}
@@ -425,16 +425,16 @@ export default function({ apiClient, app, moduleDir }: ModuleParams) {
   // 后台管理路由
   honoApp.get('/admin', createHtmlWithConfig({
     src: "https://esm.d8d.fun/xb", 
-    href: "/asset/admin/web_app.tsx", 
-    denoJson: "/asset/admin/deno.json", 
+    href: "/client/admin/web_app.tsx", 
+    denoJson: "/client/admin/deno.json", 
     refresh: true, 
     prodPath: "admin/web_app.js"
   }, GLOBAL_CONFIG.APP_NAME))
   
   honoApp.get('/admin/*', createHtmlWithConfig({
     src: "https://esm.d8d.fun/xb", 
-    href: "/asset/admin/web_app.tsx", 
-    denoJson: "/asset/admin/deno.json", 
+    href: "/client/admin/web_app.tsx", 
+    denoJson: "/client/admin/deno.json", 
     refresh: true, 
     prodPath: "admin/web_app.js"
   }, GLOBAL_CONFIG.APP_NAME))
@@ -462,10 +462,10 @@ export default function({ apiClient, app, moduleDir }: ModuleParams) {
   })
   
   // 静态资源路由
-  honoApp.get('/asset/*', staticRoutes)
+  honoApp.get('/client/*', staticRoutes)
   honoApp.get('/amap/*', staticRoutes)
   honoApp.get('/tailwindcss@3.4.16/*', staticRoutes)
-  honoApp.get('/asset_dist/*', staticRoutes)
+  honoApp.get('/client_dist/*', staticRoutes)
   
   return honoApp
 }
