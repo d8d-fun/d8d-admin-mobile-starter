@@ -2,9 +2,9 @@ import axios from 'axios';
 import type { MinioUploadPolicy, OSSUploadPolicy } from '@d8d-appcontainer/types';
 import 'dayjs/locale/zh-cn';
 import type { 
-  User, FileLibrary, FileCategory, KnowInfo,
-  AuthContextType, ThemeContextType, Attachment, ThemeSettings,
- SystemSetting, SystemSettingGroupData
+  User, FileLibrary, FileCategory, ThemeSettings,
+  SystemSetting, SystemSettingGroupData, 
+  LoginLocation, LoginLocationDetail
 } from '../share/types.ts';
 
 

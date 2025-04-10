@@ -408,3 +408,43 @@ export interface KnowInfo {
   /** 更新时间 */
   updated_at: Date;
 }
+
+// 登录位置详细信息
+export interface LoginLocationDetail {
+  /** 记录ID */
+  id: number;
+  /** 用户ID */
+  user_id: number;
+  /** 登录时间 */
+  login_time: string;
+  /** IP地址 */
+  ip_address: string;
+  /** 用户代理 */
+  user_agent: string;
+  /** 纬度 */
+  latitude: number | null;
+  /** 经度 */
+  longitude: number | null;
+  /** 位置名称 */
+  location_name?: string;
+  /** 关联用户信息 */
+  user?: {
+    id: number;
+    username: string;
+    nickname?: string;
+  };
+}
+
+// 登录位置信息
+export interface LoginLocation {
+  /** 纬度 */
+  latitude: number | null;
+  /** 经度 */
+  longitude: number | null;
+  /** IP地址 */
+  ip_address?: string;
+  /** 用户代理 */
+  user_agent?: string;
+  /** 登录时间 */
+  login_time?: string;
+}
