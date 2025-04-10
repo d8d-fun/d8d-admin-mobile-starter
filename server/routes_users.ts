@@ -238,14 +238,14 @@ export function createUserRoutes(withAuth: WithAuth) {
   })
 
   // 获取当前用户信息
-  usersRoutes.get('/me', withAuth, async (c) => {
+  usersRoutes.get('/me/profile', withAuth, async (c) => {
     try {
       const user = c.get('user')!
       
       const apiClient = c.get('apiClient')
       const userData = await apiClient.database.table('users')
         .where('id', user.id)
-        .select('id', 'username', 'nickname', 'email', 'phone', 'role', 'created_at')
+        .select('id', 'username', 'nickname', 'email', 'phone', 'created_at')
         .first()
       
       if (!user) {
@@ -253,7 +253,7 @@ export function createUserRoutes(withAuth: WithAuth) {
       }
       
       return c.json({
-        data: user,
+        data: userData,
         message: '获取用户详情成功'
       })
     } catch (error) {
@@ -263,7 +263,7 @@ export function createUserRoutes(withAuth: WithAuth) {
   })
 
   // 更新当前用户信息
-  usersRoutes.put('/me', withAuth, async (c) => {
+  usersRoutes.put('/me/profile', withAuth, async (c) => {
     try {
       const user = c.get('user')!
       const apiClient = c.get('apiClient')
@@ -294,7 +294,7 @@ export function createUserRoutes(withAuth: WithAuth) {
 
       const updatedUser = await apiClient.database.table('users')
         .where('id', user.id)
-        .select('id', 'username', 'nickname', 'email', 'phone', 'role', 'created_at')
+        .select('id', 'username', 'nickname', 'email', 'phone', 'created_at')
         .first()
 
       return c.json({

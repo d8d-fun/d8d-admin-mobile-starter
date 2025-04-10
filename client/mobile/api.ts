@@ -152,7 +152,7 @@ interface UsersResponse {
   };
 }
 
-interface UserResponse {
+export interface UserResponse {
   data: User;
   message?: string;
 }
@@ -227,7 +227,7 @@ export const UserAPI = {
   // 获取当前用户信息
   getCurrentUser: async (): Promise<UserResponse> => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/users/me`);
+      const response = await axios.get(`${API_BASE_URL}/users/me/profile`);
       return response.data;
     } catch (error) {
       throw error;
@@ -237,7 +237,7 @@ export const UserAPI = {
   // 更新当前用户信息
   updateCurrentUser: async (userData: Partial<User>): Promise<UserUpdateResponse> => {
     try {
-      const response = await axios.put(`${API_BASE_URL}/users/me`, userData);
+      const response = await axios.put(`${API_BASE_URL}/users/me/profile`, userData);
       return response.data;
     } catch (error) {
       throw error;

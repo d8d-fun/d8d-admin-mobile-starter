@@ -1,11 +1,18 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { UserAPI } from './api.ts'
-import { useAuth } from './hooks.tsx'
+import type { User } from '../share/types.ts'
+import type { UserResponse } from './api.ts'
 
 export default function SettingsPage() {
-  const { register, handleSubmit, formState: { errors } } = useForm<{
+  const { data: userResponse, isLoading } = useQuery<UserResponse, Error, User>({
+    queryKey: ['currentUser'],
+    queryFn: () => UserAPI.getCurrentUser(),
+    select: (response) => response.data
+  })
+
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<{
     nickname: string
     email: string
     phone?: string
@@ -40,6 +47,27 @@ export default function SettingsPage() {
     password?: string
   }) => {
     updateUser(data)
+  }
+
+  React.useEffect(() => {
+    if (userResponse) {
+      reset({
+        nickname: userResponse.nickname || '',
+        email: userResponse.email || '',
+        phone: userResponse.phone || ''
+      })
+    }
+  }, [userResponse, reset])
+
+  if (isLoading) {
+    return (
+      <div className="p-4">
+        <h1 className="text-2xl font-bold mb-4">设置</h1>
+        <div className="bg-white rounded-lg shadow p-4">
+          <p>加载中...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
