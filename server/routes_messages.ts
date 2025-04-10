@@ -62,9 +62,8 @@ export function createMessagesRoutes(withAuth: WithAuth) {
       const user = c.get('user')
       if (!user) return c.json({ error: '未授权访问' }, 401)
       
-      const query = apiClient.database.table('user_messages')
+      const query = apiClient.database.table('user_messages as um')
         .select('m.*', 'um.status as user_status', 'um.read_at', 'um.id as user_message_id')
-        .from('user_messages as um')
         .leftJoin('messages as m', 'um.message_id', 'm.id')
         .where('um.user_id', user.id)
         .where('um.is_deleted', 0)
@@ -94,9 +93,8 @@ export function createMessagesRoutes(withAuth: WithAuth) {
       const user = c.get('user')
       if (!user) return c.json({ error: '未授权访问' }, 401)
       
-      const message = await apiClient.database.table('user_messages')
+      const message = await apiClient.database.table('user_messages as um')
         .select('m.*', 'um.status as user_status', 'um.read_at')
-        .from('user_messages as um')
         .leftJoin('messages as m', 'um.message_id', 'm.id')
         .where('um.user_id', user.id)
         .where('um.message_id', messageId)
@@ -153,7 +151,7 @@ export function createMessagesRoutes(withAuth: WithAuth) {
   })
 
   // 获取未读消息数量
-  messagesRoutes.get('/unread-count', withAuth, async (c) => {
+  messagesRoutes.get('/count/unread', withAuth, async (c) => {
     try {
       const apiClient = c.get('apiClient')
 
@@ -164,7 +162,6 @@ export function createMessagesRoutes(withAuth: WithAuth) {
         .where('user_id', user.id)
         .where('status', MessageStatus.UNREAD)
         .where('is_deleted', 0)
-        .clone()
         .count()
 
       return c.json({ count: Number(count) })

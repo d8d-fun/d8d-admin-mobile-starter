@@ -676,7 +676,7 @@ export const MessageAPI = {
   // 获取未读消息数量
   getUnreadCount: async (): Promise<UnreadCountResponse> => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/messages/unread-count`);
+      const response = await axios.get(`${API_BASE_URL}/messages/count/unread`);
       return response.data;
     } catch (error) {
       throw error;
