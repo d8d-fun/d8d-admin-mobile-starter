@@ -7,7 +7,8 @@ import {
   Navigate,
   useLocation,
   useNavigate,
-  Link
+  Link,
+  useRouteError
 } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import dayjs from 'dayjs';
@@ -16,6 +17,7 @@ import { AuthProvider, ThemeProvider, useAuth } from './hooks.tsx';
 import HomePage from './pages_index.tsx';
 import LoginPage from './pages_login.tsx';
 import { GlobalConfig } from "../share/types.ts";
+import { ExclamationTriangleIcon, HomeIcon, BellIcon, UserIcon } from '@heroicons/react/24/outline';
 
 // 设置中文语言
 dayjs.locale('zh-cn');
@@ -153,6 +155,42 @@ const PageNotFound = () => (
   </div>
 );
 
+// 添加错误页面组件
+const ErrorPage = () => {
+  const error = useRouteError() as any;
+  const errorMessage = error?.statusText || error?.message || '未知错误';
+  
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen p-6 text-center bg-gray-50">
+      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
+        <ExclamationTriangleIcon className="h-16 w-16 text-red-600 mx-auto mb-4" />
+        <h1 className="text-2xl font-medium mb-2">出错了</h1>
+        <div className="text-gray-500 mb-4">抱歉，页面加载过程中发生错误</div>
+        
+        <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
+          <p className="text-red-700 text-sm font-medium">错误信息：</p>
+          <p className="text-red-600 mt-1 text-sm break-all">{errorMessage}</p>
+          {error?.stack && (
+            <details className="mt-2">
+              <summary className="text-red-700 text-sm cursor-pointer">查看详细信息</summary>
+              <pre className="mt-2 text-xs text-red-600 overflow-auto p-2 bg-red-50 rounded">
+                {error.stack}
+              </pre>
+            </details>
+          )}
+        </div>
+        
+        <a 
+          href="/mobile"
+          className="inline-flex items-center justify-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors w-full"
+        >
+          返回首页
+        </a>
+      </div>
+    </div>
+  );
+};
+
 // 添加个人页面组件
 const ProfilePage = () => (
   <div className="p-4">
@@ -232,7 +270,7 @@ const MobileLayout = () => {
               location.pathname === '/mobile' ? 'text-blue-600' : 'text-gray-500'
             }`}
           >
-            <div className="text-xl mb-1">🏠</div>
+            <HomeIcon className="w-6 h-6 mb-1" />
             <span className="text-xs">首页</span>
           </Link>
           <Link 
@@ -241,7 +279,7 @@ const MobileLayout = () => {
               location.pathname === '/mobile/notifications' ? 'text-blue-600' : 'text-gray-500'
             }`}
           >
-            <div className="text-xl mb-1">🔔</div>
+            <BellIcon className="w-6 h-6 mb-1" />
             <span className="text-xs">通知</span>
           </Link>
           <Link 
@@ -250,7 +288,7 @@ const MobileLayout = () => {
               location.pathname === '/mobile/profile' ? 'text-blue-600' : 'text-gray-500'
             }`}
           >
-            <div className="text-xl mb-1">👤</div>
+            <UserIcon className="w-6 h-6 mb-1" />
             <span className="text-xs">我的</span>
           </Link>
         </div>
@@ -265,11 +303,13 @@ const App = () => {
   const router = createBrowserRouter([
     {
       path: '/',
-      element: <Navigate to="/mobile" replace />
+      element: <Navigate to="/mobile" replace />,
+      errorElement: <ErrorPage />
     },
     {
       path: '/mobile/login',
-      element: <LoginPage />
+      element: <LoginPage />,
+      errorElement: <ErrorPage />
     },
     {
       path: '/mobile',
@@ -278,6 +318,7 @@ const App = () => {
           <MobileLayout />
         </ProtectedRoute>
       ),
+      errorElement: <ErrorPage />,
       children: [
         {
           index: true,

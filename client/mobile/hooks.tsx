@@ -57,24 +57,10 @@ const defaultThemeSettings: ThemeSettings = {
 };
 
 // 创建认证上下文
-const AuthContext = createContext<AuthContextType>({
-  user: null,
-  token: null,
-  login: async () => {},
-  logout: async () => {},
-  isAuthenticated: false,
-  isLoading: true
-});
+const AuthContext = createContext<AuthContextType | null>(null);
 
 // 创建主题上下文
-const ThemeContext = createContext<ThemeContextType>({
-  isDark: false,
-  currentTheme: defaultThemeSettings,
-  updateTheme: () => {},
-  saveTheme: async () => defaultThemeSettings,
-  resetTheme: async () => defaultThemeSettings,
-  toggleTheme: () => {}
-});
+const ThemeContext = createContext<ThemeContextType | null>(null);
 
 // 认证提供者组件
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -107,7 +93,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLocalStorageWithExpiry('token', token, 24); // 24小时过期
       setLocalStorageWithExpiry('user', user, 24);
       
-      return user;
     } catch (error) {
       console.error('登录失败:', error);
       throw error;
@@ -255,18 +240,19 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   );
 };
 
-// 主题hook
-export const useTheme = () => useContext(ThemeContext);
+// 使用上下文的钩子
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth必须在AuthProvider内部使用');
+  }
+  return context;
+};
 
-// 认证hook
-export const useAuth = () => useContext(AuthContext);
-
-// API hook
-export const useApi = () => {
-  const { token } = useAuth();
-  
-  return {
-    api,
-    isAuthenticated: !!token
-  };
-}; 
+export const useTheme = () => {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error('useTheme必须在ThemeProvider内部使用');
+  }
+  return context;
+};

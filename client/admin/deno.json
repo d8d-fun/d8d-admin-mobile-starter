@@ -19,9 +19,6 @@
     "lodash": "https://esm.d8d.fun/lodash@4.17.21"
   },
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext", "deno.ns"],
-    "jsx": "react",
-    "jsxFactory": "React.createElement",
-    "jsxFragmentFactory": "React.Fragment"
+    "lib": ["dom", "dom.iterable", "esnext", "deno.ns"]
   }
 }
