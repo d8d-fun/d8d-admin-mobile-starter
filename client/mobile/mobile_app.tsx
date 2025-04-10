@@ -5,7 +5,9 @@ import {
   RouterProvider,
   Outlet,
   Navigate,
-  useLocation
+  useLocation,
+  useNavigate,
+  Link
 } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import dayjs from 'dayjs';
@@ -224,33 +226,33 @@ const MobileLayout = () => {
       {/* 底部导航栏 */}
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
         <div className="flex justify-around">
-          <a 
-            href="/mobile" 
+          <Link 
+            to="/mobile"
             className={`flex flex-col items-center py-2 px-4 ${
               location.pathname === '/mobile' ? 'text-blue-600' : 'text-gray-500'
             }`}
           >
             <div className="text-xl mb-1">🏠</div>
             <span className="text-xs">首页</span>
-          </a>
-          <a 
-            href="/mobile/notifications" 
+          </Link>
+          <Link 
+            to="/mobile/notifications"
             className={`flex flex-col items-center py-2 px-4 ${
               location.pathname === '/mobile/notifications' ? 'text-blue-600' : 'text-gray-500'
             }`}
           >
             <div className="text-xl mb-1">🔔</div>
             <span className="text-xs">通知</span>
-          </a>
-          <a 
-            href="/mobile/profile" 
+          </Link>
+          <Link 
+            to="/mobile/profile"
             className={`flex flex-col items-center py-2 px-4 ${
               location.pathname === '/mobile/profile' ? 'text-blue-600' : 'text-gray-500'
             }`}
           >
             <div className="text-xl mb-1">👤</div>
             <span className="text-xs">我的</span>
-          </a>
+          </Link>
         </div>
       </nav>
     </div>
