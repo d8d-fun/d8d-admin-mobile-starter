@@ -1,8 +1,8 @@
 import { JSDOM } from 'jsdom'
 import React from 'react'
 import {render, fireEvent, within, screen} from '@testing-library/react'
-import { ThemeSettingsPage } from "../pages_theme_settings.tsx"
-import { ThemeProvider } from "../hooks_sys.tsx"
+import { ThemeSettingsPage } from "./pages_theme_settings.tsx"
+import { ThemeProvider } from "./hooks_sys.tsx"
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import {
   assertEquals,
