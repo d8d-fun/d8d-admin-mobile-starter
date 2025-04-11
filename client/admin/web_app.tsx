@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext, useContext } from 'react';
+import React, { useState, useEffect} from 'react';
 import { createRoot } from 'react-dom/client';
 import { 
   createBrowserRouter,
@@ -18,7 +18,6 @@ import {
   Switch, Badge, Image, Upload, Divider, Descriptions,
   Popconfirm, Tag, Statistic, DatePicker, Radio, Progress, Tabs, List, Alert, Collapse, Empty, Drawer
 } from 'antd';
-import zhCN from "antd/locale/zh_CN";
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -31,8 +30,6 @@ import {
   BookOutlined,
   FileOutlined,
   PieChartOutlined,
-  UploadOutlined,
-  GlobalOutlined,
   VerticalAlignTopOutlined,
   CloseOutlined,
   SearchOutlined
@@ -40,27 +37,15 @@ import {
 import { 
   QueryClient,
   QueryClientProvider,
-  useQuery,
-  useMutation,
-  useQueryClient
 } from '@tanstack/react-query';
-import axios from 'axios';
 import dayjs from 'dayjs';
 import weekday from 'dayjs/plugin/weekday';
 import localeData from 'dayjs/plugin/localeData';
-import { uploadMinIOWithPolicy } from '@d8d-appcontainer/api';
-import type { MinioUploadPolicy } from '@d8d-appcontainer/types';
-import { Line, Pie, Column } from "@ant-design/plots";
 import 'dayjs/locale/zh-cn';
 import type { 
   GlobalConfig
 } from '../share/types.ts';
 
-import {
-  EnableStatus, DeleteStatus, ThemeMode, FontSize, CompactMode
-} from '../share/types.ts';
-
-import { getEnumOptions } from './utils.ts';
 
 import {
   AuthProvider,
@@ -81,7 +66,7 @@ import {ThemeSettingsPage} from './pages_theme_settings.tsx'
 import { ChartDashboardPage } from './pages_chart.tsx';
 import { LoginMapPage } from './pages_map.tsx';
 import { LoginPage } from './pages_login_reg.tsx';
-
+import { ProtectedRoute } from './components_protected_route.tsx';
 
 // 配置 dayjs 插件
 dayjs.extend(weekday);
@@ -440,34 +425,7 @@ const MainLayout = () => {
   );
 };
 
-// 受保护的路由组件
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, isLoading } = useAuth();
-  const navigate = useNavigate();
-  
-  useEffect(() => {
-    // 只有在加载完成且未认证时才重定向
-    if (!isLoading && !isAuthenticated) {
-      navigate('/admin/login', { replace: true });
-    }
-  }, [isAuthenticated, isLoading, navigate]);
-  
-  // 显示加载状态，直到认证检查完成
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
-      </div>
-    );
-  }
-  
-  // 如果未认证且不再加载中，不显示任何内容（等待重定向）
-  if (!isAuthenticated) {
-    return null;
-  }
-  
-  return children;
-};
+
 
 // 错误页面组件
 const ErrorPage = () => {

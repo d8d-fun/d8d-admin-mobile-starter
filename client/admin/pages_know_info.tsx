@@ -148,6 +148,7 @@ export const KnowInfoPage = () => {
   // 处理搜索
   const handleSearch = async (values: any) => {
     try {
+      console.log('handleSearch', values)
       queryClient.removeQueries({ queryKey: ['knowInfos'] });
       setSearchParams({
         title: values.title || '',
@@ -286,7 +287,7 @@ export const KnowInfoPage = () => {
               <Button type="primary" htmlType="submit">
                 搜索
               </Button>
-              <Button onClick={() => {
+              <Button htmlType="reset" onClick={() => {
                 setSearchParams({
                   title: '',
                   category: '',
