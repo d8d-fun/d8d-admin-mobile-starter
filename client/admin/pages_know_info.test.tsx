@@ -1,6 +1,6 @@
 import { JSDOM } from 'jsdom'
 import React from 'react'
-import {render, fireEvent, within, screen, waitFor, configure} from '@testing-library/react'
+import {render, waitFor, within} from '@testing-library/react'
 import {userEvent} from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router'
@@ -174,16 +174,13 @@ Deno.test({
 
     try {
 
-      // 确保在正确的测试环境中设置 userEvent
-      const user = userEvent.setup({
-        document: dom.window.document,
-        delay: 0
-      });
 
       // 渲染组件
       const {
         findByText, findByPlaceholderText, queryByText, 
-        findByRole, findAllByRole, findByLabelText, findAllByText, debug
+        findByRole, findAllByRole, findByLabelText, findAllByText, debug,
+        queryByRole
+
       } = render(
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
@@ -219,6 +216,12 @@ Deno.test({
       // 测试2: 搜索表单功能
       await t.step('搜索表单应正常工作', async () => {
         
+        // 确保在正确的测试环境中设置 userEvent
+        const user = userEvent.setup({
+          document: dom.window.document,
+          delay: 0
+        });
+        // 直接查找标题搜索输入框和搜索按钮
         const searchInput = await findByPlaceholderText(/请输入文章标题/i) as HTMLInputElement;
         const searchButton = await findByText(/搜 索/i);
 
@@ -226,7 +229,6 @@ Deno.test({
         assertExists(searchButton, '未找到搜索按钮');
         
         // 输入搜索内容
-        
         await user.type(searchInput, '数据分析')
         assertEquals(searchInput.value, '数据分析', '搜索输入框值未更新');
         
@@ -305,85 +307,136 @@ Deno.test({
 
       // 测试4: 添加文章功能
       await t.step('应能打开添加文章模态框', async () => {
+        // 确保在正确的测试环境中设置 userEvent
+        const user = userEvent.setup({
+          document: dom.window.document,
+          delay: 0
+        });
+
         const addButton = await findByText(/添加文章/i);
         assertExists(addButton, '未找到添加文章按钮');
 
         await user.click(addButton);
-        
-        const modalTitle = await findByText(/添加知识库文章/i);
-        assertExists(modalTitle, '未找到添加文章模态框');
 
-        debug(modalTitle)
+        // 找到模态框
+        const modal = await findByRole('dialog');
+        assertExists(modal, '未找到模态框');
+        
+        const modalTitle = await within(modal).findByText(/添加知识库文章/i);
+        assertExists(modalTitle, '未找到添加文章模态框');
         
         // 验证表单字段
-        const titleInput = await findByLabelText(/文章标题/i);
+        const titleInput = await within(modal).findByPlaceholderText(/请输入文章标题/i);
         assertExists(titleInput, '未找到标题输入框');
+
+        const contentInput = await within(modal).findByPlaceholderText(/请输入文章内容/i);
+        assertExists(contentInput, '未找到文章内容输入框');
+
+        // 取消
+        const cancelButton = await within(modal).findByText(/取 消/i);
+        assertExists(cancelButton, '未找到取消按钮');
+        await user.click(cancelButton);
+
+        // 验证模态框是否关闭
+        await waitFor(async () => {
+          
+          const modalTitle = await within(modal).findByText(/添加知识库文章/i);
+          assertExists(!modalTitle, '模态框未关闭');
+        }, {
+          timeout: 1000 * 5,
+          onTimeout: () => new Error('等待模态框关闭超时')
+        });
       });
 
       // 测试5: 完整添加文章流程
       await t.step('应能完整添加一篇文章', async () => {
+        
+        // 确保在正确的测试环境中设置 userEvent
+        const user = userEvent.setup({
+          document: dom.window.document,
+          delay: 0
+        });
         // 打开添加模态框
         const addButton = await findByText(/添加文章/i);
         assertExists(addButton, '未找到添加文章按钮');
 
         await user.click(addButton);
 
-        // 填写表单
-        const titleInput = await findByLabelText(/文章标题/i) as HTMLInputElement;
-        const contentInput = await findByLabelText(/文章内容/i) as HTMLTextAreaElement;
-        const submitButton = await findByText(/确 定/i);
+        // 找到模态框
+        const modal = await findByRole('dialog');
+        assertExists(modal, '未找到模态框');
 
-        assertExists(titleInput, '未找到标题输入框');
+        const modalTitle = await within(modal).findByText(/添加知识库文章/i);
+        assertExists(modalTitle, '未找到添加文章模态框');
+
+        // 确保上一个测试的输入框值不会影响这个测试
+        // 在模态框内查找标题和内容输入框
+        const titleInput = await within(modal).findByPlaceholderText(/请输入文章标题/i) as HTMLInputElement;
+        const contentInput = await within(modal).findByPlaceholderText(/请输入文章内容/i) as HTMLTextAreaElement;
+        const submitButton = await within(modal).findByText(/确 定/i);
+
+        assertExists(titleInput, '未找到模态框中的标题输入框');
         assertExists(contentInput, '未找到文章内容输入框');
         assertExists(submitButton, '未找到提交按钮');
 
-
-        await user.type(titleInput, '测试文章标题')
-        await user.type(contentInput, '这是测试文章内容')
+        // 先清空输入框，以防止之前的测试影响
+        // await user.clear(titleInput);
+        // await user.clear(contentInput);
         
-        debug(titleInput)
-        debug(contentInput)
-        debug(submitButton)
+        // 输入新值
+        await user.type(titleInput, '测试文章标题');
+        await user.type(contentInput, '这是测试文章内容');
+
+        debug(titleInput);
+        debug(contentInput);
+        debug(submitButton);
 
         // 验证表单字段
-        assertEquals(titleInput.value, '测试文章标题', '标题输入框值未更新');
+        assertEquals(titleInput.value, '测试文章标题', '模态框中标题输入框值未更新');
         assertEquals(contentInput.value, '这是测试文章内容', '内容输入框值未更新');
         
         // 提交表单
         await user.click(submitButton);
+        let rows: HTMLElement[] = [];
 
-        // // 验证提交后状态
-        // await waitFor(() => {
-        //   const successMessage = queryByText(/添加成功/i);
-        //   assertExists(successMessage, '未显示添加成功提示');
-        // });
+        
+        const table = await findByRole('table');
+        assertExists(table, '未找到数据表格');
 
-        // // 验证模态框已关闭
-        // await waitFor(() => {
-        //   const modalTitle = queryByText(/添加知识库文章/i);
-        //   assertEquals(modalTitle, null, '添加模态框未关闭');
-        // });
-
-        // 验证表格中是否出现新添加的文章
+        // 等待表格刷新并验证
         await waitFor(async () => {
-            const table = await findByRole('table');
-            const rows = await within(table).findAllByRole('row');
-            
-            const hasNewArticle = rows.some(async row => {
-              // 使用更通用的选择器来查找包含文本的单元格
-              const cells = await within(row).findAllByRole('cell')
-              return cells.some(cell => cell.textContent?.includes('测试文章标题'));
-            });
+          rows = await within(table).findAllByRole('row');
+          assert(rows.length === 2, '表格未刷新');
+        }, {
+          timeout: 1000 * 5,
+          onTimeout: () => new Error('等待表格刷新超时')
+        });
 
-            console.log('hasNewArticle', hasNewArticle)
-            
-            assert(hasNewArticle, '新添加的文章未出现在表格中');
-          }, 
-          // {
-          //   timeout: 5000,
-          //   onTimeout: () => new Error('等待新文章出现在表格中超时')
-          // }
-        );
+        // 等待搜索结果并验证
+        await waitFor(async () => {
+          rows = await within(table).findAllByRole('row');
+          assert(rows.length > 2, '表格没有数据');
+        }, {
+          timeout: 1000 * 5,
+          onTimeout: () => new Error('等待搜索结果超时')
+        });
+        
+        // 检查至少有一行包含"测试文章标题"
+        const matchResults = await Promise.all(rows.map(async row => {
+          try{
+            const cells = await within(row).findAllByRole('cell');
+            return cells.some(cell => {
+              return cell.textContent?.includes('测试文章标题')
+            });
+          } catch (error: unknown) {
+            // console.error('搜索结果获取失败', error)
+            return false
+          }
+        }))
+        // console.log('matchResults', matchResults)
+        const hasMatch = matchResults.some(result => result);
+
+        assert(hasMatch, '搜索结果中没有找到包含"测试文章标题"的文章');
       });
 
   // // 测试5: 分页功能

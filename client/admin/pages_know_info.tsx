@@ -107,6 +107,7 @@ export const KnowInfoPage = () => {
   
   // 处理表单提交
   const handleSubmit = async (values: Partial<KnowInfo>) => {
+    console.log('handleSubmit', values)
     try {
       const response = formMode === 'create'
         ? await KnowInfoAPI.createKnowInfo(values)
@@ -325,7 +326,10 @@ export const KnowInfoPage = () => {
       <Modal
         title={formMode === 'create' ? '添加知识库文章' : '编辑知识库文章'}
         open={modalVisible}
-        onOk={() => form.submit()}
+        onOk={() => {
+          console.log('onOk', form.getFieldsValue())
+          form.submit()
+        }}
         onCancel={() => setModalVisible(false)}
         width={800}
         okText="确定"
