@@ -6,7 +6,7 @@ import type {
   User, FileLibrary, FileCategory, ThemeSettings,
  SystemSetting, SystemSettingGroupData, 
  LoginLocation, LoginLocationDetail,
- Message, UserMessage
+ Message, UserMessage, KnowInfo
 } from '../share/types.ts';
 
 
@@ -605,6 +605,37 @@ export interface LoginLocationUpdateResponse {
   data: LoginLocationDetail;
 }
 
+// 知识库相关接口类型定义
+interface KnowInfoListResponse {
+  data: KnowInfo[];
+  pagination: {
+    total: number;
+    current: number;
+    pageSize: number;
+    totalPages: number;
+  };
+}
+
+interface KnowInfoResponse {
+  data: KnowInfo;
+  message?: string;
+}
+
+interface KnowInfoCreateResponse {
+  message: string;
+  data: KnowInfo;
+}
+
+interface KnowInfoUpdateResponse {
+  message: string;
+  data: KnowInfo;
+}
+
+interface KnowInfoDeleteResponse {
+  message: string;
+  id: number;
+}
+
 
 // 地图相关API
 export const MapAPI = {
@@ -648,6 +679,64 @@ export const MapAPI = {
 };
 
 // 系统设置API
+// 知识库API
+export const KnowInfoAPI = {
+  // 获取知识库列表
+  getKnowInfos: async (params?: {
+    page?: number;
+    pageSize?: number;
+    search?: string;
+    categoryId?: number;
+  }): Promise<KnowInfoListResponse> => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/know-infos`, { params });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // 获取单个知识详情
+  getKnowInfo: async (id: number): Promise<KnowInfoResponse> => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/know-infos/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // 创建知识
+  createKnowInfo: async (data: Partial<KnowInfo>): Promise<KnowInfoCreateResponse> => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/know-infos`, data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // 更新知识
+  updateKnowInfo: async (id: number, data: Partial<KnowInfo>): Promise<KnowInfoUpdateResponse> => {
+    try {
+      const response = await axios.put(`${API_BASE_URL}/know-infos/${id}`, data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // 删除知识
+  deleteKnowInfo: async (id: number): Promise<KnowInfoDeleteResponse> => {
+    try {
+      const response = await axios.delete(`${API_BASE_URL}/know-infos/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+};
+
 export const SystemAPI = {
   // 获取所有系统设置
   getSettings: async (): Promise<SystemSettingGroupData[]> => {

@@ -72,9 +72,9 @@ import {
 import {
   DashboardPage,
   UsersPage,
-  KnowInfoPage,
   FileLibraryPage
 } from './pages_sys.tsx';
+import { KnowInfoPage } from './pages_know.tsx';
 import { MessagesPage } from './pages_messages.tsx';
 import {
   SettingsPage,

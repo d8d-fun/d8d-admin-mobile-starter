@@ -1,6 +1,5 @@
-import { JSDOM } from 'npm:jsdom'
+import { JSDOM } from 'jsdom'
 import React from 'react'
-import 'npm:jsdom-global'
 import {render, fireEvent, within, screen} from '@testing-library/react'
 import { ThemeSettingsPage } from "../pages_settings.tsx"
 import { ThemeProvider } from "../hooks_sys.tsx"
@@ -79,7 +78,7 @@ Deno.test('主题设置页面测试', async (t) => {
     </QueryClientProvider>
   )
 
-  debug(await findByRole('radio', { name: /浅色模式/i }))
+  // debug(await findByRole('radio', { name: /浅色模式/i }))
 
   // 测试1: 渲染基本元素
   await t.step('应渲染主题设置标题', async () => {

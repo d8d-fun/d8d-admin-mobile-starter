@@ -29,7 +29,8 @@
     "react-hook-form": "https://esm.d8d.fun/react-hook-form@7.55.0?dev&deps=react@19.0.0,react-dom@19.0.0",
     "@heroicons/react/24/outline": "https://esm.d8d.fun/@heroicons/react@2.1.1/24/outline?dev&deps=react@19.0.0,react-dom@19.0.0",
     "@heroicons/react/24/solid": "https://esm.d8d.fun/@heroicons/react@2.1.1/24/solid?dev&deps=react@19.0.0,react-dom@19.0.0",
-    "@testing-library/react": "https://esm.d8d.fun/@testing-library/react@16.3.0?dev&deps=react@19.0.0,react-dom@19.0.0"
+    "@testing-library/react": "https://esm.d8d.fun/@testing-library/react@16.3.0?dev&deps=react@19.0.0,react-dom@19.0.0",
+    "jsdom":"npm:jsdom@26.0.0"
   },
   "compilerOptions": {
     "lib": ["dom", "dom.iterable", "esnext", "deno.ns"]
