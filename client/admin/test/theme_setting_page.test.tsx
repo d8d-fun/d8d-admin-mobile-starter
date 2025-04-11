@@ -1,61 +1,116 @@
 import { JSDOM } from 'npm:jsdom'
 import React from 'react'
+import 'npm:jsdom-global'
 import {render, fireEvent, within, screen} from '@testing-library/react'
 import { ThemeSettingsPage } from "../pages_settings.tsx"
 import { ThemeProvider } from "../hooks_sys.tsx"
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import {
+  assertEquals,
+  assertExists,
+  assertNotEquals,
+  assertRejects,
+} from "https://deno.land/std@0.217.0/assert/mod.ts";
 
 const queryClient = new QueryClient()
 
 
-const dom = new JSDOM(`<body></body>`, { runScripts: "dangerously" ,  pretendToBeVisual: true });
+const dom = new JSDOM(`<body></body>`, { 
+  runScripts: "dangerously",
+  pretendToBeVisual: true,
+  url: "http://localhost"
+});
 
-// The script will be executed and modify the DOM:
-// console.log(dom.window.document.getElementById("root").innerHTML); // 1
+// 模拟浏览器环境
 globalThis.window = dom.window;
 globalThis.document = dom.window.document;
-const customScreen = within(document.body)
 
-// console.log(dom.window.document.getElementById("root").innerHTML); // 1
-// const div = globalThis.document.createElement("div");
-// div.innerHTML = "主题设置";
-// globalThis.document.getElementById("root")?.appendChild(div);
+// 定义浏览器环境所需的类
+globalThis.Element = dom.window.Element;
+globalThis.HTMLElement = dom.window.HTMLElement;
+globalThis.ShadowRoot = dom.window.ShadowRoot;
+globalThis.SVGElement = dom.window.SVGElement;
 
-// render(<TestNode />);
+// 模拟 getComputedStyle
+globalThis.getComputedStyle = (elt) => {
+  const style = new dom.window.CSSStyleDeclaration();
+  style.getPropertyValue = () => '';
+  return style;
+};
 
-// const testMessage = 'Test Message'
-// render(<HiddenMessage>{testMessage}</HiddenMessage>)
-// console.log('document.body.innerHTML', document.body.innerHTML);
-// const customScreen = within(document.body)
+// 模拟matchMedia函数
+globalThis.matchMedia = (query) => ({
+  matches: query.includes('max-width'),
+  media: query,
+  onchange: null,
+  addListener: () => {},
+  removeListener: () => {},
+  addEventListener: () => {},
+  removeEventListener: () => {},
+  dispatchEvent: () => false,
+});
 
-// screen.debug()
+// 模拟动画相关API
+globalThis.AnimationEvent = globalThis.AnimationEvent || dom.window.Event;
+globalThis.TransitionEvent = globalThis.TransitionEvent || dom.window.Event;
 
-// // // query* functions will return the element or null if it cannot be found
-// // // get* functions will return the element or throw an error if it cannot be found
-// console.log('queryByText', customScreen.queryByText(testMessage))
+// 模拟requestAnimationFrame
+globalThis.requestAnimationFrame = globalThis.requestAnimationFrame || ((cb) => setTimeout(cb, 0));
+globalThis.cancelAnimationFrame = globalThis.cancelAnimationFrame || clearTimeout;
 
-// // // the queries can accept a regex to make your selectors more resilient to content tweaks and changes.
-// fireEvent.click(customScreen.getByLabelText(/show/i))
+// 设置浏览器尺寸相关方法
+window.resizeTo = (width, height) => {
+  window.innerWidth = width || window.innerWidth;
+  window.innerHeight = height || window.innerHeight;
+  window.dispatchEvent(new Event('resize'));
+};
+window.scrollTo = () => {};
 
-// screen.debug()
+const customScreen = within(document.body);
 
-// // // .toBeInTheDocument() is an assertion that comes from jest-dom
-// // // otherwise you could use .toBeDefined()
-// console.log('getByText', customScreen.getByText(testMessage).innerHTML.includes(testMessage))
+// 使用异步测试处理真实API调用
+Deno.test('主题设置页面测试', async (t) => {
+  // 渲染组件
+  const {findByRole, debug} = render(
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <ThemeSettingsPage />
+      </ThemeProvider>
+    </QueryClientProvider>
+  )
 
-// // console.log(globalThis.document.body.innerHTML);
-// // console.log(screen.debug());
-// // screen.findByText("主题设置");
+  debug(await findByRole('radio', { name: /浅色模式/i }))
 
-render((
-  <QueryClientProvider client={queryClient}>
-    <ThemeProvider>
-      <ThemeSettingsPage />
-    </ThemeProvider>
-  </QueryClientProvider>
-))
+  // 测试1: 渲染基本元素
+  await t.step('应渲染主题设置标题', async () => {
+    const title = await customScreen.findByText(/主题设置/i)
+    assertExists(title, '未找到主题设置标题')
+  })
 
-screen.debug()
+  // 测试2: 表单初始化状态
+  await t.step('表单应正确初始化', async () => {
+    // 检查主题模式选择
+    const lightRadio = await customScreen.findByRole('radio', { name: /浅色模式/i })
+    assertExists(lightRadio, '未找到浅色模式单选按钮')
+    
+    // 检查主题模式标签
+    const themeModeLabel = await customScreen.findByText(/主题模式/i)
+    assertExists(themeModeLabel, '未找到主题模式标签')
+    
+    // // 检查主题模式选择器 - Ant Design 使用 div 包裹 radio 而不是 radiogroup
+    // const themeModeField = await customScreen.findByTestId('theme-mode-selector')
+    // assertExists(themeModeField, '未找到主题模式选择器')
+  })
 
-// screen.findByText("主题设置")
+  // 测试3: 配色方案选择
+  await t.step('应显示配色方案选项', async () => {
+    // 查找预设配色方案标签
+    const colorSchemeLabel = await customScreen.findByText('预设配色方案')
+    assertExists(colorSchemeLabel, '未找到预设配色方案标签')
+    
+    // 查找配色方案按钮
+    const colorSchemeButtons = await customScreen.findAllByRole('button')
+    assertNotEquals(colorSchemeButtons.length, 0, '未找到配色方案按钮')
+  })
+})
 

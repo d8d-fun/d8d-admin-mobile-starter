@@ -481,22 +481,26 @@ export const ThemeSettingsPage = () => {
             {/* 配色方案选择 */}
             <Form.Item label="预设配色方案">
               <Space wrap>
-                {Object.entries(COLOR_SCHEMES[form.getFieldValue('theme_mode') as ThemeMode]).map(([key, scheme]) => (
-                  <Button
-                    key={key}
-                    onClick={() => {
-                      handleColorSchemeChange(key);
-                      form.setFieldValue('scheme_name', scheme.name);
-                    }}
-                    style={{
-                      backgroundColor: scheme.background,
-                      color: scheme.text,
-                      borderColor: scheme.primary
-                    }}
-                  >
-                    {scheme.name}
-                  </Button>
-                ))}
+                {(() => {
+                  const themeMode = (form.getFieldValue('theme_mode') as ThemeMode) || ThemeMode.LIGHT;
+                  const schemes = COLOR_SCHEMES[themeMode] || {};
+                  return Object.entries(schemes).map(([key, scheme]) => (
+                    <Button
+                      key={key}
+                      onClick={() => {
+                        handleColorSchemeChange(key);
+                        form.setFieldValue('scheme_name', scheme.name);
+                      }}
+                      style={{
+                        backgroundColor: scheme.background,
+                        color: scheme.text,
+                        borderColor: scheme.primary
+                      }}
+                    >
+                      {scheme.name}
+                    </Button>
+                  ));
+                })()}
               </Space>
             </Form.Item>
 
