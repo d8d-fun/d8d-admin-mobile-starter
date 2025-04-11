@@ -107,9 +107,11 @@ export const LoginMapPage = () => {
   };
 
   // 渲染地图标记点
-  const renderMarkers = (locations: LoginLocation[]): MarkerData[] => {
+  const renderMarkers = (locations: LoginLocation[] = []): MarkerData[] => {
+    if (!Array.isArray(locations)) return [];
+    
     return locations
-      .filter(location => location.longitude !== null && location.latitude !== null)
+      .filter(location => location?.longitude !== null && location?.latitude !== null)
       .map(location => ({
         id: location.id?.toString() || '',
         longitude: location.longitude as number,
@@ -157,7 +159,7 @@ export const LoginMapPage = () => {
         <Spin spinning={markersLoading}>
           <div style={{ height: '100%', minHeight: '500px' }}>
             <AMap
-              markers={renderMarkers(locations)}
+              markers={renderMarkers(locations || [])}
               center={locations[0] && locations[0].longitude !== null && locations[0].latitude !== null 
                 ? [locations[0].longitude, locations[0].latitude] as [number, number] 
                 : undefined}

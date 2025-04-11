@@ -308,7 +308,7 @@ export const useAMapMarkers = ({
   };
 
   useEffect(() => {
-    if (!map) return;
+    if (!map || !Array.isArray(markers)) return;
 
     // 清理旧的标记点和聚合点
     if (clusterInstance.current) {
@@ -319,10 +319,12 @@ export const useAMapMarkers = ({
     markersRef.current = [];
 
     // 根据配置添加新的标记点
-    if (showCluster) {
-      handleCluster();
-    } else {
-      handleMarkers();
+    if (markers.length > 0) {
+      if (showCluster) {
+        handleCluster();
+      } else {
+        handleMarkers();
+      }
     }
 
     return () => {
