@@ -126,7 +126,7 @@ export const KnowInfoPage = () => {
   // 处理编辑
   const handleEdit = async (id: number) => {
     const article = await fetchArticle(id);
-    
+    console.log('article', article)
     if (article) {
       setFormMode('edit');
       setEditingId(id);

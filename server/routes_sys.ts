@@ -103,7 +103,7 @@ export function createKnowInfoRoutes(withAuth: WithAuth) {
         return c.json({ error: "文章不存在" }, 404);
       }
 
-      return c.json(article);
+      return c.json({message: '获取知识库文章详情成功', data: article});
     } catch (error) {
       log.api("获取知识库文章详情失败:", error);
       return c.json({ error: "获取知识库文章详情失败" }, 500);
