@@ -59,6 +59,7 @@ export const KnowInfoPage = () => {
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form] = Form.useForm();
+  const [searchForm] = Form.useForm();
   const [searchParams, setSearchParams] = useState({
     title: '',
     category: '',
@@ -270,6 +271,7 @@ export const KnowInfoPage = () => {
     <div>
       <Card title="知识库管理" className="mb-4">
         <Form
+          form={searchForm}
           layout="inline"
           onFinish={handleSearch}
           style={{ marginBottom: '16px' }}
@@ -288,6 +290,7 @@ export const KnowInfoPage = () => {
                 搜索
               </Button>
               <Button htmlType="reset" onClick={() => {
+                searchForm.resetFields();
                 setSearchParams({
                   title: '',
                   category: '',
@@ -327,18 +330,23 @@ export const KnowInfoPage = () => {
         title={formMode === 'create' ? '添加知识库文章' : '编辑知识库文章'}
         open={modalVisible}
         onOk={() => {
-          console.log('onOk', form.getFieldsValue())
-          form.submit()
+          form.validateFields()
+            .then(values => {
+              handleSubmit(values);
+            })
+            .catch(info => {
+              console.log('表单验证失败:', info);
+            });
         }}
         onCancel={() => setModalVisible(false)}
         width={800}
         okText="确定"
         cancelText="取消"
+        destroyOnClose
       >
         <Form
           form={form}
           layout="vertical"
-          onFinish={handleSubmit}
           initialValues={{
             audit_status: AuditStatus.PENDING,
           }}
@@ -374,7 +382,7 @@ export const KnowInfoPage = () => {
           <Form.Item
             name="content"
             label="文章内容"
-            rules={[{ required: true, message: '请输入文章内容' }]}
+            // rules={[{ required: true, message: '请输入文章内容' }]}
           >
             <Input.TextArea rows={15} placeholder="请输入文章内容，支持Markdown格式" />
           </Form.Item>
