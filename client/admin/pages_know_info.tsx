@@ -59,7 +59,6 @@ export const KnowInfoPage = () => {
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form] = Form.useForm();
-  const [isLoading, setIsLoading] = useState(false);
   const [searchParams, setSearchParams] = useState({
     title: '',
     category: '',
@@ -68,18 +67,32 @@ export const KnowInfoPage = () => {
   });
   
   // 使用React Query获取知识库文章列表
-  const { data: articlesData, isLoading: isListLoading, refetch } = useQuery<KnowInfoListResponse>({
+  const { data: articlesData, isLoading: isListLoading, refetch } = useQuery({
     queryKey: ['knowInfos', searchParams],
     queryFn: () => KnowInfoAPI.getKnowInfos({
       page: searchParams.page,
       pageSize: searchParams.limit,
       title: searchParams.title,
       category: searchParams.category
-    })
+    }),
+    placeholderData: {
+      data: [],
+      pagination: {
+        current: 1,
+        pageSize: 10,
+        total: 0,
+        totalPages: 1
+      }
+    }
   });
   
-  const articles = articlesData?.data || [];
-  const pagination = articlesData?.pagination || { current: 1, pageSize: 10, total: 0 };
+  const articles = React.useMemo(() => (articlesData as KnowInfoListResponse)?.data || [], [articlesData]);
+  const pagination = React.useMemo(() => ({
+    current: (articlesData as KnowInfoListResponse)?.pagination?.current || 1,
+    pageSize: (articlesData as KnowInfoListResponse)?.pagination?.pageSize || 10,
+    total: (articlesData as KnowInfoListResponse)?.pagination?.total || 0,
+    totalPages: (articlesData as KnowInfoListResponse)?.pagination?.totalPages || 1
+  }), [articlesData]);
   
   // 获取单个知识库文章
   const fetchArticle = async (id: number) => {
@@ -94,8 +107,6 @@ export const KnowInfoPage = () => {
   
   // 处理表单提交
   const handleSubmit = async (values: Partial<KnowInfo>) => {
-    setIsLoading(true);
-    
     try {
       const response = formMode === 'create'
         ? await KnowInfoAPI.createKnowInfo(values)
@@ -107,8 +118,6 @@ export const KnowInfoPage = () => {
       refetch();
     } catch (error) {
       message.error((error as Error).message);
-    } finally {
-      setIsLoading(false);
     }
   };
   
@@ -137,14 +146,18 @@ export const KnowInfoPage = () => {
   };
   
   // 处理搜索
-  const handleSearch = (values: any) => {
-    queryClient.removeQueries({ queryKey: ['knowInfos'] });
-    setSearchParams(prev => ({
-      ...prev,
-      title: values.title || '',
-      category: values.category || '',
-      page: 1,
-    }));
+  const handleSearch = async (values: any) => {
+    try {
+      queryClient.removeQueries({ queryKey: ['knowInfos'] });
+      setSearchParams({
+        title: values.title || '',
+        category: values.category || '',
+        page: 1,
+        limit: searchParams.limit,
+      });
+    } catch (error) {
+      message.error('搜索失败');
+    }
   };
   
   // 处理分页
@@ -296,7 +309,7 @@ export const KnowInfoPage = () => {
           rowKey="id"
           loading={{
             spinning: isListLoading,
-            tip: '加载中...',
+            tip: '正在加载数据...',
           }}
           pagination={{
             current: pagination.current,
@@ -304,6 +317,7 @@ export const KnowInfoPage = () => {
             total: pagination.total,
             onChange: handlePageChange,
             showSizeChanger: true,
+            showTotal: (total) => `共 ${total} 条`,
           }}
         />
       </Card>
@@ -314,6 +328,8 @@ export const KnowInfoPage = () => {
         onOk={() => form.submit()}
         onCancel={() => setModalVisible(false)}
         width={800}
+        okText="确定"
+        cancelText="取消"
       >
         <Form
           form={form}
@@ -385,14 +401,6 @@ export const KnowInfoPage = () => {
             <Select options={auditStatusOptions} />
           </Form.Item>
           
-          <Form.Item>
-            <Space>
-              <Button type="primary" htmlType="submit" loading={isLoading}>
-                {formMode === 'create' ? '创建' : '保存'}
-              </Button>
-              <Button onClick={() => setModalVisible(false)}>取消</Button>
-            </Space>
-          </Form.Item>
         </Form>
       </Modal>
     </div>
