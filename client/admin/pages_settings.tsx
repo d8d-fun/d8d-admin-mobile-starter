@@ -484,22 +484,40 @@ export const ThemeSettingsPage = () => {
                 {(() => {
                   const themeMode = (form.getFieldValue('theme_mode') as ThemeMode) || ThemeMode.LIGHT;
                   const schemes = COLOR_SCHEMES[themeMode] || {};
-                  return Object.entries(schemes).map(([key, scheme]) => (
-                    <Button
-                      key={key}
-                      onClick={() => {
-                        handleColorSchemeChange(key);
-                        form.setFieldValue('scheme_name', scheme.name);
-                      }}
-                      style={{
-                        backgroundColor: scheme.background,
-                        color: scheme.text,
-                        borderColor: scheme.primary
-                      }}
-                    >
-                      {scheme.name}
-                    </Button>
-                  ));
+                  const currentPrimary = form.getFieldValue('primary_color');
+                  const currentBg = form.getFieldValue('background_color');
+                  const currentText = form.getFieldValue('text_color');
+                  
+                  return Object.entries(schemes).map(([key, scheme]) => {
+                    const isActive = 
+                      scheme.primary === currentPrimary && 
+                      scheme.background === currentBg && 
+                      scheme.text === currentText;
+                    
+                    return (
+                      <Button
+                        key={key}
+                        onClick={() => {
+                          handleColorSchemeChange(key);
+                          form.setFieldValue('scheme_name', scheme.name);
+                        }}
+                        style={{
+                          backgroundColor: scheme.background,
+                          color: scheme.text,
+                          borderColor: isActive ? scheme.text : scheme.primary,
+                          borderWidth: isActive ? 2 : 1,
+                          boxShadow: isActive ? `0 0 0 2px ${scheme.primary}` : 'none',
+                          fontWeight: isActive ? 'bold' : 'normal',
+                          transition: 'all 0.3s'
+                        }}
+                      >
+                        {scheme.name}
+                        {isActive && (
+                          <span style={{ marginLeft: 4 }}>✓</span>
+                        )}
+                      </Button>
+                    );
+                  });
                 })()}
               </Space>
             </Form.Item>
