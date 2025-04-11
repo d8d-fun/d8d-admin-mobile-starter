@@ -685,8 +685,9 @@ export const KnowInfoAPI = {
   getKnowInfos: async (params?: {
     page?: number;
     pageSize?: number;
-    search?: string;
-    categoryId?: number;
+    title?: string;
+    category?: string;
+    tags?: string;
   }): Promise<KnowInfoListResponse> => {
     try {
       const response = await axios.get(`${API_BASE_URL}/know-infos`, { params });

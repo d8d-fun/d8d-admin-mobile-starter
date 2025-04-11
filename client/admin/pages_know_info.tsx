@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { 
+import React, { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import {
   Layout, Menu, Button, Table, Space,
   Form, Input, Select, message, Modal,
   Card, Spin, Row, Col, Breadcrumb, Avatar,
@@ -53,6 +54,7 @@ const { Title } = Typography;
 
 // 知识库管理页面组件
 export const KnowInfoPage = () => {
+  const queryClient = useQueryClient();
   const [modalVisible, setModalVisible] = useState(false);
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -71,8 +73,8 @@ export const KnowInfoPage = () => {
     queryFn: () => KnowInfoAPI.getKnowInfos({
       page: searchParams.page,
       pageSize: searchParams.limit,
-      search: searchParams.title,
-      categoryId: searchParams.category ? Number(searchParams.category) : undefined
+      title: searchParams.title,
+      category: searchParams.category
     })
   });
   
@@ -136,6 +138,7 @@ export const KnowInfoPage = () => {
   
   // 处理搜索
   const handleSearch = (values: any) => {
+    queryClient.removeQueries({ queryKey: ['knowInfos'] });
     setSearchParams(prev => ({
       ...prev,
       title: values.title || '',

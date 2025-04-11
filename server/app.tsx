@@ -297,7 +297,7 @@ export default function({ apiClient, app, moduleDir }: ModuleParams) {
   // 注册基础路由
   api.route('/auth', createAuthRoutes(withAuth))
   api.route('/users', createUserRoutes(withAuth))
-  api.route('/know-info', createKnowInfoRoutes(withAuth))
+  api.route('/know-infos', createKnowInfoRoutes(withAuth))
   api.route('/upload', createFileUploadRoutes(withAuth)) // 添加文件上传路由
   api.route('/file-categories', createFileCategoryRoutes(withAuth)) // 添加文件分类管理路由
   api.route('/theme', createThemeRoutes(withAuth)) // 添加主题设置路由
