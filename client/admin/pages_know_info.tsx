@@ -294,7 +294,10 @@ export const KnowInfoPage = () => {
           columns={columns}
           dataSource={articles}
           rowKey="id"
-          loading={isListLoading}
+          loading={{
+            spinning: isListLoading,
+            tip: '加载中...',
+          }}
           pagination={{
             current: pagination.current,
             pageSize: pagination.pageSize,
