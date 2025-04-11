@@ -74,22 +74,13 @@ import {
   UsersPage,
   FileLibraryPage
 } from './pages_sys.tsx';
-import { KnowInfoPage } from './pages_know.tsx';
+import { KnowInfoPage } from './pages_know_info.tsx';
 import { MessagesPage } from './pages_messages.tsx';
-import {
-  SettingsPage,
-  ThemeSettingsPage,
- } from './pages_settings.tsx';
- import {
-  ChartDashboardPage,
- } from './pages_chart.tsx';
- import {
-  LoginMapPage
- } from './pages_map.tsx';
-
-import {
-  LoginPage,
-} from './pages_login_reg.tsx';
+import {SettingsPage } from './pages_settings.tsx';
+import {ThemeSettingsPage} from './pages_theme_settings.tsx'
+import { ChartDashboardPage } from './pages_chart.tsx';
+import { LoginMapPage } from './pages_map.tsx';
+import { LoginPage } from './pages_login_reg.tsx';
 
 
 // 配置 dayjs 插件

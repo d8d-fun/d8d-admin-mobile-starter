@@ -36,6 +36,8 @@ import { getEnumOptions } from './utils.ts';
 import {
   FileAPI,
   UserAPI,
+  KnowInfoAPI,
+  type KnowInfoListResponse
 } from './api.ts';
 
 
@@ -64,29 +66,14 @@ export const KnowInfoPage = () => {
   });
   
   // 使用React Query获取知识库文章列表
-  const { data: articlesData, isLoading: isListLoading, refetch } = useQuery({
-    queryKey: ['articles', searchParams],
-    queryFn: async () => {
-      const { title, category, page, limit } = searchParams;
-      const params = new URLSearchParams();
-      
-      if (title) params.append('title', title);
-      if (category) params.append('category', category);
-      params.append('page', String(page));
-      params.append('limit', String(limit));
-      
-      const response = await fetch(`/api/know-info?${params.toString()}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      
-      if (!response.ok) {
-        throw new Error('获取知识库文章列表失败');
-      }
-      
-      return await response.json();
-    }
+  const { data: articlesData, isLoading: isListLoading, refetch } = useQuery<KnowInfoListResponse>({
+    queryKey: ['knowInfos', searchParams],
+    queryFn: () => KnowInfoAPI.getKnowInfos({
+      page: searchParams.page,
+      pageSize: searchParams.limit,
+      search: searchParams.title,
+      categoryId: searchParams.category ? Number(searchParams.category) : undefined
+    })
   });
   
   const articles = articlesData?.data || [];
@@ -95,17 +82,8 @@ export const KnowInfoPage = () => {
   // 获取单个知识库文章
   const fetchArticle = async (id: number) => {
     try {
-      const response = await fetch(`/api/know-info/${id}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      
-      if (!response.ok) {
-        throw new Error('获取知识库文章详情失败');
-      }
-      
-      return await response.json();
+      const response = await KnowInfoAPI.getKnowInfo(id);
+      return response.data;
     } catch (error) {
       message.error('获取知识库文章详情失败');
       return null;
@@ -117,24 +95,9 @@ export const KnowInfoPage = () => {
     setIsLoading(true);
     
     try {
-      const url = formMode === 'create'
-        ? '/api/know-info'
-        : `/api/know-info/${editingId}`;
-      
-      const method = formMode === 'create' ? 'POST' : 'PUT';
-      
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify(values),
-      });
-      
-      if (!response.ok) {
-        throw new Error(formMode === 'create' ? '创建知识库文章失败' : '更新知识库文章失败');
-      }
+      const response = formMode === 'create'
+        ? await KnowInfoAPI.createKnowInfo(values)
+        : await KnowInfoAPI.updateKnowInfo(editingId!, values);
       
       message.success(formMode === 'create' ? '创建知识库文章成功' : '更新知识库文章成功');
       setModalVisible(false);
@@ -162,16 +125,7 @@ export const KnowInfoPage = () => {
   // 处理删除
   const handleDelete = async (id: number) => {
     try {
-      const response = await fetch(`/api/know-info/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      
-      if (!response.ok) {
-        throw new Error('删除知识库文章失败');
-      }
+      await KnowInfoAPI.deleteKnowInfo(id);
       
       message.success('删除知识库文章成功');
       refetch();

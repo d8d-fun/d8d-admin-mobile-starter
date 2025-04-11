@@ -606,7 +606,7 @@ export interface LoginLocationUpdateResponse {
 }
 
 // 知识库相关接口类型定义
-interface KnowInfoListResponse {
+export interface KnowInfoListResponse {
   data: KnowInfo[];
   pagination: {
     total: number;
