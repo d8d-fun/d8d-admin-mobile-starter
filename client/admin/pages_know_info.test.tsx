@@ -173,6 +173,13 @@ Deno.test({
 
 
     try {
+
+      // 确保在正确的测试环境中设置 userEvent
+      const user = userEvent.setup({
+        document: dom.window.document,
+        delay: 0
+      });
+
       // 渲染组件
       const {
         findByText, findByPlaceholderText, queryByText, 
@@ -211,11 +218,6 @@ Deno.test({
 
       // 测试2: 搜索表单功能
       await t.step('搜索表单应正常工作', async () => {
-        // 确保在正确的测试环境中设置 userEvent
-        const user = userEvent.setup({
-          document: dom.window.document,
-          delay: 0
-        });
         
         const searchInput = await findByPlaceholderText(/请输入文章标题/i) as HTMLInputElement;
         const searchButton = await findByText(/搜 索/i);
@@ -224,24 +226,12 @@ Deno.test({
         assertExists(searchButton, '未找到搜索按钮');
         
         // 输入搜索内容
-        try {
-          await user.type(searchInput, '数据分析')
-        } catch (error: unknown) {
-          // console.error('输入搜索内容失败', error)
-        }
+        
+        await user.type(searchInput, '数据分析')
         assertEquals(searchInput.value, '数据分析', '搜索输入框值未更新');
-
-        console.log('searchInput', searchInput.value)
-
-        debug(searchInput)
-        debug(searchButton)
         
         // 提交搜索
-        try {
-          await user.click(searchButton);
-        } catch (error: unknown) {
-          // console.error('点击搜索按钮失败', error)
-        }
+        await user.click(searchButton);
         
 
         let rows: HTMLElement[] = [];
@@ -253,7 +243,6 @@ Deno.test({
         // 等待表格刷新并验证
         await waitFor(async () => {
           rows = await within(table).findAllByRole('row');
-          console.log('等待表格刷新并验证', rows.length)
           assert(rows.length === 2, '表格未刷新');
         }, {
           timeout: 1000 * 5,
@@ -263,7 +252,6 @@ Deno.test({
         // 等待搜索结果并验证
         await waitFor(async () => {
           rows = await within(table).findAllByRole('row');
-          console.log('等待搜索结果并验证', rows.length)
           assert(rows.length > 2, '表格没有数据');
         }, {
           timeout: 1000 * 5,
@@ -286,8 +274,6 @@ Deno.test({
         }))
         // console.log('matchResults', matchResults)
         const hasMatch = matchResults.some(result => result);
-
-        console.log('hasMatch', hasMatch)
 
         assert(hasMatch, '搜索结果中没有找到包含"数据分析"的文章');
       });
@@ -320,10 +306,14 @@ Deno.test({
       // 测试4: 添加文章功能
       await t.step('应能打开添加文章模态框', async () => {
         const addButton = await findByText(/添加文章/i);
-        fireEvent.click(addButton);
+        assertExists(addButton, '未找到添加文章按钮');
+
+        await user.click(addButton);
         
         const modalTitle = await findByText(/添加知识库文章/i);
         assertExists(modalTitle, '未找到添加文章模态框');
+
+        debug(modalTitle)
         
         // 验证表单字段
         const titleInput = await findByLabelText(/文章标题/i);
@@ -334,22 +324,33 @@ Deno.test({
       await t.step('应能完整添加一篇文章', async () => {
         // 打开添加模态框
         const addButton = await findByText(/添加文章/i);
-        fireEvent.click(addButton);
+        assertExists(addButton, '未找到添加文章按钮');
+
+        await user.click(addButton);
 
         // 填写表单
         const titleInput = await findByLabelText(/文章标题/i) as HTMLInputElement;
         const contentInput = await findByLabelText(/文章内容/i) as HTMLTextAreaElement;
         const submitButton = await findByText(/确 定/i);
 
-        fireEvent.change(titleInput, { target: { value: '测试文章标题' } });
-        fireEvent.change(contentInput, { target: { value: '这是测试文章内容' } });
+        assertExists(titleInput, '未找到标题输入框');
+        assertExists(contentInput, '未找到文章内容输入框');
+        assertExists(submitButton, '未找到提交按钮');
+
+
+        await user.type(titleInput, '测试文章标题')
+        await user.type(contentInput, '这是测试文章内容')
+        
+        debug(titleInput)
+        debug(contentInput)
+        debug(submitButton)
 
         // 验证表单字段
         assertEquals(titleInput.value, '测试文章标题', '标题输入框值未更新');
         assertEquals(contentInput.value, '这是测试文章内容', '内容输入框值未更新');
         
         // 提交表单
-        fireEvent.click(submitButton);
+        await user.click(submitButton);
 
         // // 验证提交后状态
         // await waitFor(() => {
@@ -373,6 +374,8 @@ Deno.test({
               const cells = await within(row).findAllByRole('cell')
               return cells.some(cell => cell.textContent?.includes('测试文章标题'));
             });
+
+            console.log('hasNewArticle', hasNewArticle)
             
             assert(hasNewArticle, '新添加的文章未出现在表格中');
           }, 

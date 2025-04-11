@@ -148,7 +148,6 @@ export const KnowInfoPage = () => {
   // 处理搜索
   const handleSearch = async (values: any) => {
     try {
-      console.log('handleSearch', values)
       queryClient.removeQueries({ queryKey: ['knowInfos'] });
       setSearchParams({
         title: values.title || '',
