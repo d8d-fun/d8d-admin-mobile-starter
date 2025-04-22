@@ -1,43 +1,54 @@
-[0m[38;5;245mrunning 1 test from ./client/admin/pages_know_info.test.tsx[0m
-知识库管理页面测试 ...
-  应正确渲染页面元素 ... [0m[32mok[0m [0m[38;5;245m(2s)[0m
-  初始加载表格数据 ... [0m[32mok[0m [0m[38;5;245m(729ms)[0m
-  搜索表单应正常工作 ... [0m[32mok[0m [0m[38;5;245m(1s)[0m
-  表格应加载并显示数据 ... [0m[32mok[0m [0m[38;5;245m(38ms)[0m
-  应能打开添加文章模态框 ...
-[0m[38;5;245m------- output -------[0m
-[36m<div[39m
-  [33mclass[39m=[32m"ant-modal-title"[39m
-  [33mid[39m=[32m":rq:"[39m
-[36m>[39m
-  [0m添加知识库文章[0m
-[36m</div>[39m
-[0m[38;5;245m----- output end -----[0m
-  应能打开添加文章模态框 ... [0m[32mok[0m [0m[38;5;245m(298ms)[0m
-  应能完整添加一篇文章 ...
-[0m[38;5;245m------- output -------[0m
-[36m<input[39m
-  [33maria-required[39m=[32m"true"[39m
-  [33mclass[39m=[32m"ant-input css-dev-only-do-not-override-1a3rktk ant-input-outlined"[39m
-  [33mid[39m=[32m"title"[39m
-  [33mplaceholder[39m=[32m"请输入文章标题"[39m
-  [33mtype[39m=[32m"text"[39m
-  [33mvalue[39m=[32m""[39m
-[36m/>[39m
-[36m<textarea[39m
-  [33maria-required[39m=[32m"true"[39m
-  [33mclass[39m=[32m"ant-input css-dev-only-do-not-override-1a3rktk ant-input-outlined"[39m
-  [33mid[39m=[32m"content"[39m
-  [33mplaceholder[39m=[32m"请输入文章内容，支持Markdown格式"[39m
-  [33mrows[39m=[32m"15"[39m
-[36m/>[39m
-[36m<span>[39m
-  [0m确 定[0m
-[36m</span>[39m
-hasNewArticle true
-[0m[38;5;245m----- output end -----[0m
-  应能完整添加一篇文章 ... [0m[32mok[0m [0m[38;5;245m(483ms)[0m
-知识库管理页面测试 ... [0m[32mok[0m [0m[38;5;245m(6s)[0m
+[测试套件] 知识库管理页面测试 (./client/admin/pages_know_info.test.tsx)
 
-[0m[32mok[0m | 1 passed (6 steps) | 0 failed [0m[38;5;245m(6s)[0m
+[测试用例] 应正确渲染页面元素
+- 状态: 通过
+- 耗时: 2.000s
 
+[测试用例] 初始加载表格数据
+- 状态: 通过 
+- 耗时: 0.729s
+
+[测试用例] 搜索表单应正常工作
+- 状态: 通过
+- 耗时: 1.000s
+
+[测试用例] 表格应加载并显示数据
+- 状态: 通过
+- 耗时: 0.038s
+
+[测试用例] 应能打开添加文章模态框
+- 状态: 通过
+- 耗时: 0.298s
+- 输出内容:
+  <div class="ant-modal-title" id=":rq:">
+    添加知识库文章
+  </div>
+
+[测试用例] 应能完整添加一篇文章
+- 状态: 通过
+- 耗时: 0.483s
+- 输出内容:
+  <input
+    aria-required="true"
+    class="ant-input css-dev-only-do-not-override-1a3rktk ant-input-outlined"
+    id="title"
+    placeholder="请输入文章标题"
+    type="text"
+    value=""
+  />
+  <textarea
+    aria-required="true"
+    class="ant-input css-dev-only-do-not-override-1a3rktk ant-input-outlined"
+    id="content"
+    placeholder="请输入文章内容，支持Markdown格式"
+    rows="15"
+  />
+  <span>确 定</span>
+  hasNewArticle true
+
+[测试总结]
+- 总测试数: 1
+- 通过数: 1
+- 失败数: 0
+- 总耗时: 6.000s
+- 所有测试通过
