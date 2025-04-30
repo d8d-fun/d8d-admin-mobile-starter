@@ -226,7 +226,7 @@ export type WithAuth = typeof withAuth;
 // 定义模块参数接口
 interface ModuleParams {
   apiClient: APIClient
-  app: Hono<{ Variables: Variables }>
+  app: Hono
   moduleDir: string
 }
 
