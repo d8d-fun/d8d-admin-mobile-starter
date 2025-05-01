@@ -65,7 +65,7 @@ const runTemplate = async () => {
       const appInstance = templateModule.default({
         apiClient: apiClient,
         app: moduleApp,
-        moduleDir: './admin-mobile-starter'
+        moduleDir: './'
       })
       
       // 启动服务器
