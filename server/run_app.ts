@@ -69,8 +69,8 @@ const runTemplate = async () => {
       })
       
       // 启动服务器
-      Deno.serve({ port: 8000 }, appInstance.fetch)
-      console.log('应用已启动，监听端口: 8000')
+      Deno.serve({ port: 8080 }, appInstance.fetch)
+      console.log('应用已启动，监听端口: 8080')
     }
   } catch (error) {
     console.error('模板加载失败:', error)
